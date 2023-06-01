@@ -23,3 +23,8 @@ def get_compression(orig, comp):
         printer.warning("The resulting files are larger than the original ones!")
     else:
         printer.info(f'Compression: {comp}%')
+
+
+def help_message():
+    text = "Usage: main.py {folder}"
+    return text
