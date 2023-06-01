@@ -49,7 +49,7 @@ def compress(folder):
 
                     if not has_transparency(Image.open(f'{folder}/{file}')):
                         jpg_comp = config['FFMPEG']['JpegComp']
-                        printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext, f"{jpg_comp}%")
+                        printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext, f"level {jpg_comp}")
                         os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} '{folder}_compressed/{os.path.splitext(file)[0]}.{req_image_ext}'")
 
                     else:

@@ -36,7 +36,7 @@ def get_compression_status(orig_folder):
         if os.path.isfile(f'{orig_folder}/{file}'):
             orig_folder_len += 1
 
-    for file in os.listdir(orig_folder):
+    for file in os.listdir(f'{orig_folder}_compressed'):
         if os.path.isfile(f'{orig_folder}_compressed/{file}'):
             comp_folder_len += 1
 
