@@ -17,12 +17,15 @@ def get_compression(orig, comp):
     for file in os.listdir(comp):
         processed_files.append(os.path.splitext(file)[0])
 
-    comp = 100 - int((get_dir_size(comp, processed_files) / get_dir_size(orig, processed_files)) * 100)
-    if comp < 0:
-        printer.warning(f'Compression: {comp}%')
-        printer.warning("The resulting files are larger than the original ones!")
-    else:
-        printer.info(f'Compression: {comp}%')
+    try:
+        comp = 100 - int((get_dir_size(comp, processed_files) / get_dir_size(orig, processed_files)) * 100)
+        if comp < 0:
+            printer.warning(f'Compression: {comp}%')
+            printer.warning("The resulting files are larger than the original ones!")
+        else:
+            printer.info(f'Compression: {comp}%')
+    except ZeroDivisionError:
+        printer.warning("Nothing compressed!")
 
 
 def help_message():
