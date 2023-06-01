@@ -2,7 +2,6 @@
 Python utility uses ffmpeg to compress Visual Novel Resources
 
 ### How to use
-* Configure utitlity in `config.ini`
-* `python main.py`
-* Drag and drop folder you want to compress and press `Enter`
+* Configure utitlity in `config.toml`
+* `python main.py {folder}`
 * In result you get `{folder-compressed}` near with original `{folder}`
