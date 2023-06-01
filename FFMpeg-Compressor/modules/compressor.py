@@ -1,14 +1,14 @@
 from modules import printer
 from PIL import Image
-import configparser
+import tomllib
 import os
 
 audio_exts = ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma']
 image_exts = ['.apng', '.avif', '.jfif', '.pjpeg', '.pjp', '.svg', '.webp', '.jpg', '.jpeg', '.png', '.raw']
 video_exts = ['.3gp' '.amv', '.avi', '.gif', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv', '.webm', '.ogv']
 
-config = configparser.ConfigParser()
-config.read("config.ini")
+with open("config.toml", "rb") as f:
+    config = tomllib.load(f)
 
 ffmpeg_params = config['FFMPEG']['FFmpegParams']
 req_audio_ext = config['FFMPEG']['AudioExt']
@@ -36,19 +36,25 @@ def compress(folder):
     files = len(os.listdir(path=folder))
     progress = 0
     for file in os.listdir(path=folder):
+
         if os.path.splitext(file)[1] in audio_exts:
+
             bitrate = config['FFMPEG']['AudioBitRate']
             printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_audio_ext, f"{bitrate}bit/s")
             os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} '{folder}_compressed/{os.path.splitext(file)[0]}.{req_audio_ext}'")
 
         elif os.path.splitext(file)[1] in image_exts:
+
             if req_image_ext == "jpg" or req_image_ext == "jpeg":
+
                 if not has_transparency(Image.open(f'{folder}/{file}')):
                     jpg_comp = config['FFMPEG']['JpegComp']
                     printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext,f"{jpg_comp}%")
                     os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} '{folder}_compressed/{os.path.splitext(file)[0]}.{req_image_ext}'")
+
                 else:
                     printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")
+
             else:
                 comp_level = config['FFMPEG']['CompLevel']
                 printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext, f"{comp_level}%")
