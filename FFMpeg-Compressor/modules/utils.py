@@ -28,6 +28,26 @@ def get_compression(orig, comp):
         printer.warning("Nothing compressed!")
 
 
+def get_compression_status(orig_folder):
+    orig_folder_len = 0
+    comp_folder_len = 0
+
+    for file in os.listdir(orig_folder):
+        if os.path.isfile(f'{orig_folder}/{file}'):
+            orig_folder_len += 1
+
+    for file in os.listdir(orig_folder):
+        if os.path.isfile(f'{orig_folder}_compressed/{file}'):
+            comp_folder_len += 1
+
+    if orig_folder_len == comp_folder_len:
+        printer.info("Success!")
+        get_compression(orig_folder, f"{orig_folder}_compressed")
+    else:
+        printer.warning("Some files failed to compress!")
+        get_compression(orig_folder, f"{orig_folder}_compressed")
+
+
 def help_message():
     text = "Usage: main.py {folder}"
     return text

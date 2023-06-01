@@ -21,10 +21,4 @@ except OSError:
 
 printer.info("Compression started!")
 compressor.compress(orig_folder)
-
-if len(os.listdir(path=orig_folder)) == len((os.listdir(path=f"{orig_folder}_compressed"))):
-    printer.info("Success!")
-    utils.get_compression(orig_folder, f"{orig_folder}_compressed")
-else:
-    printer.warning("Some files failed to compress!")
-    utils.get_compression(orig_folder, f"{orig_folder}_compressed")
+utils.get_compression_status(orig_folder)
