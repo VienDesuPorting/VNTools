@@ -1,4 +1,5 @@
 from modules import printer
+from PIL import Image
 import configparser
 import os
 
@@ -15,6 +16,22 @@ req_image_ext = config['FFMPEG']['ImageExt']
 req_video_ext = config['FFMPEG']['VideoExt']
 
 
+def has_transparency(img):
+    if img.info.get("transparency", None) is not None:
+        return True
+    if img.mode == "P":
+        transparent = img.info.get("transparency", -1)
+        for _, index in img.getcolors():
+            if index == transparent:
+                return True
+    elif img.mode == "RGBA":
+        extrema = img.getextrema()
+        if extrema[3][0] < 255:
+            return True
+
+    return False
+
+
 def compress(folder):
     files = len(os.listdir(path=folder))
     progress = 0
@@ -25,10 +42,13 @@ def compress(folder):
             os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} '{folder}_compressed/{os.path.splitext(file)[0]}.{req_audio_ext}'")
 
         elif os.path.splitext(file)[1] in image_exts:
-            if req_image_ext == "jpg" or os.path.splitext(file)[1] == "jpeg":
-                jpg_comp = config['FFMPEG']['JpegComp']
-                printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext,f"{jpg_comp}%")
-                os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} '{folder}_compressed/{os.path.splitext(file)[0]}.{req_image_ext}'")
+            if req_image_ext == "jpg" or req_image_ext == "jpeg":
+                if not has_transparency(Image.open(f'{folder}/{file}')):
+                    jpg_comp = config['FFMPEG']['JpegComp']
+                    printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext,f"{jpg_comp}%")
+                    os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} '{folder}_compressed/{os.path.splitext(file)[0]}.{req_image_ext}'")
+                else:
+                    printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")
             else:
                 comp_level = config['FFMPEG']['CompLevel']
                 printer.files(int((progress / files) * 100), file, os.path.splitext(file)[0], req_image_ext, f"{comp_level}%")
