@@ -9,10 +9,11 @@ def extract_assets(file):
         for content in zip_ref.namelist():
             if content.split('/')[0] == 'assets':
                 zip_ref.extract(content)
-        zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_background.png', 'assets')
-        zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets')
-        os.rename('assets/res/mipmap-xxxhdpi-v4/icon_background.png', 'assets/android-icon_background.png')
-        os.rename('assets/res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets/android-icon_foreground.png')
+        if os.path.splitext(file)[1] == '.apk':
+            zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_background.png', 'assets')
+            zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets')
+            os.rename('assets/res/mipmap-xxxhdpi-v4/icon_background.png', 'assets/android-icon_background.png')
+            os.rename('assets/res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets/android-icon_foreground.png')
 
 
 def rename_files(directory):
@@ -38,7 +39,7 @@ def rename_dirs(directory):
 
 if __name__ == '__main__':
     for filename in os.listdir(os.getcwd()):
-        if os.path.splitext(filename)[1] == '.apk':
+        if os.path.splitext(filename)[1] == '.apk' or os.path.splitext(filename)[1] == '.obb':
             print(f'[INFO] Extracting assets from {filename}... ', end='')
             extract_assets(filename)
             print('Done')
@@ -48,7 +49,8 @@ if __name__ == '__main__':
             print('Done')
             print('[INFO] Removing unneeded files... ', end='')
             shutil.rmtree('assets/renpy')
-            shutil.rmtree('assets/res')
+            if os.path.splitext(filename)[1] == '.apk':
+                shutil.rmtree('assets/res')
             print('Done')
             print('[INFO] Renaming directory... ', end='')
             os.rename('assets', f'{os.path.splitext(filename)[0]}')
