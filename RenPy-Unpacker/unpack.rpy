@@ -2,7 +2,7 @@ init 4 python:
     import os
 
     for asset in renpy.list_files():
-        if os.path.splitext(asset)[1] != ".rpa":
+        if os.path.splitext(asset)[1] != ".rpa" and asset != "unpack.rpyc":
             output = "unpack/game/" + asset
             if not os.path.exists(os.path.dirname(output)):
                 os.makedirs(os.path.dirname(output))
