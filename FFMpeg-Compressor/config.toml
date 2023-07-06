@@ -2,7 +2,7 @@
 AudioBitRate = "320k"
 AudioExt = "mp3"
 CompLevel = 20
-ImageExt = "png"
+ImageExt = "jpg"
 JpegComp = 3
 FFmpegParams = "-hide_banner -loglevel error"
 VideoCodec = "libvpx-vp9"
