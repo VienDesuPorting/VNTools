@@ -10,10 +10,15 @@ def extract_assets(file):
             if content.split('/')[0] == 'assets':
                 zip_ref.extract(content)
         if os.path.splitext(file)[1] == '.apk':
-            zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_background.png', 'assets')
-            zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets')
-            os.rename('assets/res/mipmap-xxxhdpi-v4/icon_background.png', 'assets/android-icon_background.png')
-            os.rename('assets/res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets/android-icon_foreground.png')
+            try:
+                zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_background.png', 'assets')
+                zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets')
+                os.rename('assets/res/mipmap-xxxhdpi-v4/icon_background.png', 'assets/android-icon_background.png')
+                os.rename('assets/res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets/android-icon_foreground.png')
+            except KeyError:
+                zip_ref.extract('res/drawable/icon.png', 'assets')
+                os.rename('assets/res/drawable/icon.png', 'assets/icon.png')
+
 
 
 def rename_files(directory):
@@ -39,6 +44,7 @@ def rename_dirs(directory):
 
 if __name__ == '__main__':
     for filename in os.listdir(os.getcwd()):
+        renpy_warn = 0
         if os.path.splitext(filename)[1] == '.apk' or os.path.splitext(filename)[1] == '.obb':
             print(f'[INFO] Extracting assets from {filename}... ', end='')
             extract_assets(filename)
@@ -48,10 +54,15 @@ if __name__ == '__main__':
             rename_dirs('assets')
             print('Done')
             print('[INFO] Removing unneeded files... ', end='')
-            shutil.rmtree('assets/renpy')
+            try:
+                shutil.rmtree('assets/renpy')
+            except FileNotFoundError:
+                renpy_warn = 1
             if os.path.splitext(filename)[1] == '.apk':
                 shutil.rmtree('assets/res')
             print('Done')
+            if renpy_warn:
+                print("[WARN] File does not contain renpy folder!")
             print('[INFO] Renaming directory... ', end='')
             os.rename('assets', f'{os.path.splitext(filename)[0]}')
             print('Done')
