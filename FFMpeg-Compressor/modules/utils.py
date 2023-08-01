@@ -1,21 +1,21 @@
 from modules import printer
-import glob
 import os
 
 
 def get_dir_size(directory, files):
     total_size = 0
-    for f in files:
-        fp = glob.glob(f'{directory}/{f}*')[0]
-        if not os.path.islink(fp):
-            total_size += os.path.getsize(fp)
+    for folder, folders, files in os.walk(directory):
+        for file in files:
+            if not os.path.islink(f"{folder}/{file}"):
+                total_size += os.path.getsize(f"{folder}/{file}")
     return total_size
 
 
 def get_compression(orig, comp):
     processed_files = []
-    for file in os.listdir(comp):
-        processed_files.append(os.path.splitext(file)[0])
+    for folder, folders, files in os.walk(comp):
+        for file in files:
+            processed_files.append(file)
 
     try:
         comp = 100 - int((get_dir_size(comp, processed_files) / get_dir_size(orig, processed_files)) * 100)
@@ -32,13 +32,11 @@ def get_compression_status(orig_folder):
     orig_folder_len = 0
     comp_folder_len = 0
 
-    for file in os.listdir(orig_folder):
-        if os.path.isfile(f'{orig_folder}/{file}'):
-            orig_folder_len += 1
+    for folder, folders, file in os.walk(orig_folder):
+        orig_folder_len += len(file)
 
-    for file in os.listdir(f'{orig_folder}_compressed'):
-        if os.path.isfile(f'{orig_folder}_compressed/{file}'):
-            comp_folder_len += 1
+    for folder, folders, file in os.walk(f'{orig_folder}_compressed'):
+        comp_folder_len += len(file)
 
     if orig_folder_len == comp_folder_len:
         printer.info("Success!")

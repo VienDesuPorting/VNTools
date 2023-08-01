@@ -20,7 +20,6 @@ def extract_assets(file):
                 os.rename('assets/res/drawable/icon.png', 'assets/icon.png')
 
 
-
 def rename_files(directory):
     for dir_ in os.walk(directory):
         for file in dir_[2]:
