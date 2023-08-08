@@ -47,5 +47,5 @@ def get_compression_status(orig_folder):
 
 
 def help_message():
-    text = "Usage: main.py {folder}"
+    text = "Usage: ffmpeg-comp {folder}"
     return text

@@ -7,16 +7,24 @@ def clean_str(string):
     return string + " " * (os.get_terminal_size().columns - len(string))
 
 
+def info(string):
+    print(clean_str(f"\r\033[0;32m[INFO]\033[0m {string}"))
+
+
+def warning(string):
+    print(clean_str(f"\r\033[0;33m[WARNING]\033[0m {string}"))
+
+
+def error(string):
+    print(clean_str(f"\r\033[0;31m[ERROR]\033[0m {string}"))
+
+
 def bar_init(folder):
     file_count = 0
     for folder, folders, file in os.walk(folder):
         file_count += len(file)
     global bar
     bar = IncrementalBar('Compressing', max=file_count, suffix='[%(index)d/%(max)d] (%(percent).1f%%) - ETA: %(eta)ds')
-
-
-def info(string):
-    print(clean_str(f"\r\033[0;32m[INFO] \033[0m {string}" + " "))
 
 
 def files(source, dest, dest_ext, comment):
@@ -32,7 +40,3 @@ def unknown_file(file):
 
     print(clean_str(f"\r[COMP] \033[0;33m{file}\033[0m"))
     bar.next()
-
-
-def warning(string):
-    print(clean_str(f"\r\033[0;33m[WARNING] {string}\033[0m"))

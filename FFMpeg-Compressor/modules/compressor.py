@@ -7,8 +7,14 @@ audio_exts = ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', 
 image_exts = ['.apng', '.avif', '.jfif', '.pjpeg', '.pjp', '.svg', '.webp', '.jpg', '.jpeg', '.png', '.raw']
 video_exts = ['.3gp' '.amv', '.avi', '.gif', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv', '.webm', '.ogv']
 
-with open("config.toml", "rb") as f:
-    config = tomllib.load(f)
+try:
+    config = tomllib.load(open("ffmpeg-comp.toml", "rb"))
+except FileNotFoundError:
+    try:
+        config = tomllib.load(open("/etc/ffmpeg-comp.toml", "rb"))
+    except FileNotFoundError:
+        printer.error("Config file not found. Please put it next to binary or in to /etc folder.")
+        exit()
 
 ffmpeg_params = config['FFMPEG']['FFmpegParams']
 req_audio_ext = config['FFMPEG']['AudioExt']
@@ -34,14 +40,14 @@ def has_transparency(img):
 
 def compress(root_folder, folder):
     target_folder = folder.replace(root_folder, f"{root_folder}_compressed")
-    files = len(os.listdir(folder))
     for file in os.listdir(folder):
         if os.path.isfile(f'{folder}/{file}'):
             if os.path.splitext(file)[1] in audio_exts:
 
                 bitrate = config['FFMPEG']['AudioBitRate']
                 printer.files(file, os.path.splitext(file)[0], req_audio_ext, f"{bitrate}bit/s")
-                os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} '{target_folder}/{os.path.splitext(file)[0]}.{req_audio_ext}'")
+                os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} "
+                          f"'{target_folder}/{os.path.splitext(file)[0]}.{req_audio_ext}'")
 
             elif os.path.splitext(file)[1] in image_exts:
 
@@ -50,7 +56,8 @@ def compress(root_folder, folder):
                     if not has_transparency(Image.open(f'{folder}/{file}')):
                         jpg_comp = config['FFMPEG']['JpegComp']
                         printer.files(file, os.path.splitext(file)[0], req_image_ext, f"level {jpg_comp}")
-                        os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} '{target_folder}/{os.path.splitext(file)[0]}.{req_image_ext}'")
+                        os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} "
+                                  f"'{target_folder}/{os.path.splitext(file)[0]}.{req_image_ext}'")
 
                     else:
                         printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")
@@ -58,12 +65,14 @@ def compress(root_folder, folder):
                 else:
                     comp_level = config['FFMPEG']['CompLevel']
                     printer.files(file, os.path.splitext(file)[0], req_image_ext, f"{comp_level}%")
-                    os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} '{target_folder}/{os.path.splitext(file)[0]}.{req_image_ext}'")
+                    os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
+                              f"'{target_folder}/{os.path.splitext(file)[0]}.{req_image_ext}'")
 
             elif os.path.splitext(file)[1] in video_exts:
                 codec = config['FFMPEG']['VideoCodec']
                 printer.files(file, os.path.splitext(file)[0], req_video_ext, codec)
-                os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -vcodec {codec} '{target_folder}/{os.path.splitext(file)[0]}.{req_video_ext}'")
+                os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -vcodec {codec} "
+                          f"'{target_folder}/{os.path.splitext(file)[0]}.{req_video_ext}'")
 
             else:
                 printer.warning("File extension not recognized. This may affect the quality of the compression.")
