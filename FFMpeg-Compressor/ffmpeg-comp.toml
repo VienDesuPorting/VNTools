@@ -2,14 +2,14 @@
 FFmpegParams = "-hide_banner -loglevel error"
 
 [AUDIO]
-Extension = "mp3"
+Extension = "original"
 BitRate = "320k"
 
 [IMAGE]
-Extension = "jpg"
-CompLevel = 100
+Extension = "original"
+CompLevel = 20
 JpegComp = 3
 
 [VIDEO]
-Extension = "webm"
+Extension = "original"
 Codec = "libvpx-vp9"
