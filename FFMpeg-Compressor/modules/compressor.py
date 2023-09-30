@@ -17,9 +17,9 @@ except FileNotFoundError:
         exit()
 
 ffmpeg_params = config['FFMPEG']['FFmpegParams']
-req_audio_ext = config['FFMPEG']['AudioExt']
-req_image_ext = config['FFMPEG']['ImageExt']
-req_video_ext = config['FFMPEG']['VideoExt']
+req_audio_ext = config['AUDIO']['Extension']
+req_image_ext = config['IMAGE']['Extension']
+req_video_ext = config['VIDEO']['Extension']
 
 
 def has_transparency(img):
@@ -44,7 +44,7 @@ def compress(root_folder, folder):
         if os.path.isfile(f'{folder}/{file}'):
             if os.path.splitext(file)[1] in audio_exts:
 
-                bitrate = config['FFMPEG']['AudioBitRate']
+                bitrate = config['AUDIO']['BitRate']
                 printer.files(file, os.path.splitext(file)[0], req_audio_ext, f"{bitrate}bit/s")
                 os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} "
                           f"'{target_folder}/{os.path.splitext(file)[0]}.{req_audio_ext}'")
@@ -54,7 +54,7 @@ def compress(root_folder, folder):
                 if req_image_ext == "jpg" or req_image_ext == "jpeg":
 
                     if not has_transparency(Image.open(f'{folder}/{file}')):
-                        jpg_comp = config['FFMPEG']['JpegComp']
+                        jpg_comp = config['IMAGE']['JpegComp']
                         printer.files(file, os.path.splitext(file)[0], req_image_ext, f"level {jpg_comp}")
                         os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} "
                                   f"'{target_folder}/{os.path.splitext(file)[0]}.{req_image_ext}'")
@@ -63,13 +63,13 @@ def compress(root_folder, folder):
                         printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")
 
                 else:
-                    comp_level = config['FFMPEG']['CompLevel']
+                    comp_level = config['IMAGE']['CompLevel']
                     printer.files(file, os.path.splitext(file)[0], req_image_ext, f"{comp_level}%")
                     os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
                               f"'{target_folder}/{os.path.splitext(file)[0]}.{req_image_ext}'")
 
             elif os.path.splitext(file)[1] in video_exts:
-                codec = config['FFMPEG']['VideoCodec']
+                codec = config['VIDEO']['Codec']
                 printer.files(file, os.path.splitext(file)[0], req_video_ext, codec)
                 os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -vcodec {codec} "
                           f"'{target_folder}/{os.path.splitext(file)[0]}.{req_video_ext}'")

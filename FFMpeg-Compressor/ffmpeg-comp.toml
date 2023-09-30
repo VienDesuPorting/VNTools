@@ -1,9 +1,15 @@
 [FFMPEG]
-AudioBitRate = "320k"
-AudioExt = "mp3"
-CompLevel = 20
-ImageExt = "jpg"
-JpegComp = 3
 FFmpegParams = "-hide_banner -loglevel error"
-VideoCodec = "libvpx-vp9"
-VideoExt = "webm"
+
+[AUDIO]
+Extension = "mp3"
+BitRate = "320k"
+
+[IMAGE]
+Extension = "jpg"
+CompLevel = 100
+JpegComp = 3
+
+[VIDEO]
+Extension = "webm"
+Codec = "libvpx-vp9"
