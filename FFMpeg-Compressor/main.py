@@ -8,11 +8,16 @@ import sys
 import os
 
 try:
-    orig_folder = sys.argv[1]
-    printer.orig_folder = sys.argv[1]
+    if sys.argv[1][len(sys.argv[1])-1] == "/":
+        arg_path = sys.argv[1][:len(sys.argv[1])-1]
+    else:
+        arg_path = sys.argv[1]
 except IndexError:
     print(utils.help_message())
     exit()
+
+orig_folder = arg_path
+printer.orig_folder = arg_path
 
 printer.bar_init(orig_folder)
 
