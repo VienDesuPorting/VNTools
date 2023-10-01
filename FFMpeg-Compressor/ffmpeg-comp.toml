@@ -1,6 +1,6 @@
 [FFMPEG]
 FFmpegParams = "-hide_banner -loglevel error"
-MimicMode = true
+MimicMode = false
 
 [AUDIO]
 Extension = "mp3"
