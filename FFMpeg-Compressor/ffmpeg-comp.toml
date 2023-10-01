@@ -1,15 +1,16 @@
 [FFMPEG]
 FFmpegParams = "-hide_banner -loglevel error"
+MimicMode = true
 
 [AUDIO]
-Extension = "original"
+Extension = "mp3"
 BitRate = "320k"
 
 [IMAGE]
-Extension = "original"
+Extension = "png"
 CompLevel = 20
 JpegComp = 3
 
 [VIDEO]
-Extension = "original"
+Extension = "mp4"
 Codec = "libvpx-vp9"

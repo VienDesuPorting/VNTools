@@ -5,11 +5,6 @@ import os
 
 
 def get_req_ext(file):
-    if configloader.config['AUDIO']['Extension'] == "original" or \
-       configloader.config['IMAGE']['Extension'] == "original" or \
-       configloader.config['VIDEO']['Extension'] == "original":
-        return os.path.splitext(file)[1][1:]
-
     match get_file_type(file):
         case "audio":
             return configloader.config['AUDIO']['Extension']
@@ -59,6 +54,7 @@ def compress_audio(folder, file, target_folder):
     printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{bitrate}")
     os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q:a {bitrate} "
               f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
+    return f'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'
 
 
 def compress_video(folder, file, target_folder):
@@ -68,6 +64,7 @@ def compress_video(folder, file, target_folder):
     printer.files(file, os.path.splitext(file)[0], get_req_ext(file), codec)
     os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -vcodec {codec} "
               f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
+    return f'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'
 
 
 def compress_image(folder, file, target_folder):
@@ -87,6 +84,7 @@ def compress_image(folder, file, target_folder):
         printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
         os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
                   f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
+    return f'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'
 
 
 def compress(folder, file, target_folder):
@@ -94,3 +92,4 @@ def compress(folder, file, target_folder):
     printer.warning("File extension not recognized. This may affect the quality of the compression.")
     printer.unknown_file(file)
     os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} '{target_folder}/{file}'")
+    return f'{target_folder}/{file}'

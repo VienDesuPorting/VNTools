@@ -1,5 +1,6 @@
 #!/bin/python3
 
+from modules import configloader
 from modules import compressor
 from modules import printer
 from modules import utils
@@ -35,11 +36,13 @@ for folder, folders, files in os.walk(orig_folder):
         if os.path.isfile(f'{folder}/{file}'):
             match compressor.get_file_type(file):
                 case "audio":
-                    compressor.compress_audio(folder, file, target_folder)
+                    comp_file = compressor.compress_audio(folder, file, target_folder)
                 case "image":
-                    compressor.compress_image(folder, file, target_folder)
+                    comp_file = compressor.compress_image(folder, file, target_folder)
                 case "video":
-                    compressor.compress_video(folder, file, target_folder)
+                    comp_file = compressor.compress_video(folder, file, target_folder)
                 case "unknown":
-                    compressor.compress(folder, file, target_folder)
+                    comp_file = compressor.compress(folder, file, target_folder)
+            if configloader.config['FFMPEG']['MimicMode']:
+                os.rename(comp_file, f'{folder}_compressed/{file}')
 utils.get_compression_status(orig_folder)
