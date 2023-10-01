@@ -24,3 +24,9 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 #### VIDEO section
 * Extension - Required image file extension. It supports: `.3gp`, `.amv`, `.avi`, `.gif`, `.m4v`, `.mkv`, `.mov`, `.mp4`, `.m4v`, `.mpeg`, `.mpv`, `.webm`, `.ogv`
 * Codec - (May be optional in future) Required video codec. (See official ffmpeg documentation for supported codecs) 
+
+### TODO (for testing branch)
+* [ ] Recreate whole game directory with compressed files
+* [ ] Cross platform (Easy Windows usage and binaries, MacOS binaries)
+* [ ] Use ffmpeg python bindings instead of cli commands
+* [ ] Reorganize code
