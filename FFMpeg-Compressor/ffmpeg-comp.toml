@@ -1,5 +1,5 @@
 [FFMPEG]
-FFmpegParams = "-hide_banner -loglevel error"
+FFmpegParams = "-n -hide_banner -loglevel error"
 MimicMode = false
 
 [AUDIO]
