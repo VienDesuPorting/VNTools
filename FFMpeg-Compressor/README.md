@@ -9,7 +9,8 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 
 ### Configuration
 #### FFMPEG section
-* FFMpegParams - Some parameters & flags for ffmpeg command line interface (default: `"-n -hide_banner -loglevel error"`)
+* FFMpegParams - Some parameters & flags for ffmpeg command line interface (default: `"-n -hide_banner -loglevel quiet"`)
+* CopyUnprocessed - Copy all files that failed to compress by ffmpeg to destination folder. In can helps to recreate original folder, but with compressed files.
 * MimicMode - Rename compressed file to it original name and extension. VN engines determine the file type by its header, so for example PNG file named file.jpg will be loaded as PNG file. (default: `false`)
 
 #### AUDIO section
@@ -26,7 +27,7 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 * Codec - (May be optional in future) Required video codec. (See official ffmpeg documentation for supported codecs) 
 
 ### TODO (for testing branch)
-* [ ] Recreate whole game directory with compressed files
+* [x] Recreate whole game directory with compressed files
 * [ ] Cross platform (Easy Windows usage and binaries, MacOS binaries)
 * [ ] Use ffmpeg python bindings instead of cli commands
 * [ ] Reorganize code
