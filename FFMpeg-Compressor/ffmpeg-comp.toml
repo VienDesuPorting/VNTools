@@ -1,5 +1,6 @@
 [FFMPEG]
 FFmpegParams = "-n -hide_banner -loglevel error"
+CopyUnprocessed = false
 MimicMode = false
 
 [AUDIO]
@@ -7,7 +8,7 @@ Extension = "mp3"
 BitRate = "320k"
 
 [IMAGE]
-Extension = "png"
+Extension = "jpg"
 CompLevel = 20
 JpegComp = 3
 

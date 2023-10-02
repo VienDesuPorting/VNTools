@@ -1,4 +1,6 @@
 from modules import printer
+from shutil import copyfile
+from glob import glob
 import os
 
 
@@ -32,11 +34,13 @@ def get_compression_status(orig_folder):
     orig_folder_len = 0
     comp_folder_len = 0
 
-    for folder, folders, file in os.walk(orig_folder):
-        orig_folder_len += len(file)
+    for folder, folders, files in os.walk(orig_folder):
+        orig_folder_len += len(files)
 
-    for folder, folders, file in os.walk(f'{orig_folder}_compressed'):
-        comp_folder_len += len(file)
+    for folder, folders, files in os.walk(f'{orig_folder}_compressed'):
+        for file in files:
+            if not os.path.splitext(file)[1].count(" (copy)"):
+                comp_folder_len += 1
 
     if orig_folder_len == comp_folder_len:
         printer.info("Success!")
@@ -46,6 +50,22 @@ def get_compression_status(orig_folder):
         get_compression(orig_folder, f"{orig_folder}_compressed")
 
 
+def add_unprocessed_files(orig_folder):
+    for folder, folders, files in os.walk(orig_folder):
+        for file in files:
+            new_folder = f"{folder}".replace(orig_folder, f"{orig_folder}_compressed")
+            if len(glob(f"{folder}/{os.path.splitext(file)[0]}*")) != 1:
+                if len(glob(f"{new_folder}/{file}")):
+                    copyfile(f"{folder}/{file}", f"{new_folder}/{file} (copy)")
+                    printer.warning(f'Duplicate file has been found! Check manually this files - "{file}", "{file} (copy)"')
+                else:
+                    copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
+                    printer.info(f"File {file} copied to compressed folder.")
+            else:
+                if not len(glob(f"{folder}_compressed/{os.path.splitext(file)[0]}*")):
+                    copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
+                    printer.info(f"File {file} copied to compressed folder.")
+
+
 def help_message():
-    text = "Usage: ffmpeg-comp {folder}"
-    return text
+    return "Usage: ffmpeg-comp {folder}"

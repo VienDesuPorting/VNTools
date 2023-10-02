@@ -1,4 +1,4 @@
-#!/bin/python3
+#!python3
 
 from modules import configloader
 from modules import compressor
@@ -43,6 +43,15 @@ for folder, folders, files in os.walk(orig_folder):
                     comp_file = compressor.compress_video(folder, file, target_folder)
                 case "unknown":
                     comp_file = compressor.compress(folder, file, target_folder)
+
             if configloader.config['FFMPEG']['MimicMode']:
-                os.rename(comp_file, f'{folder}_compressed/{file}')
+                try:
+                    os.rename(comp_file, f'{folder}_compressed/{file}')
+                except FileNotFoundError:
+                    printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file. "
+                                  f"You can change -loglevel in ffmpeg parameters to see full error.")
+
+if configloader.config['FFMPEG']['CopyUnprocessed']:
+    printer.info("Copying unprocessed files...")
+    utils.add_unprocessed_files(orig_folder)
 utils.get_compression_status(orig_folder)
