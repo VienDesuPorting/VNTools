@@ -44,6 +44,8 @@ for folder, folders, files in os.walk(orig_folder):
                 case "unknown":
                     comp_file = compressor.compress(folder, file, target_folder)
 
+            utils.check_file_existing(folder.replace(orig_folder, f"{orig_folder}_compressed"), file)
+
             if configloader.config['FFMPEG']['MimicMode']:
                 try:
                     os.rename(comp_file, f'{folder}_compressed/{file}')

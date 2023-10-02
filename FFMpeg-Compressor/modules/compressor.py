@@ -89,7 +89,6 @@ def compress_image(folder, file, target_folder):
 
 def compress(folder, file, target_folder):
     ffmpeg_params = configloader.config['FFMPEG']['FFmpegParams']
-    printer.warning("File extension not recognized. This may affect the quality of the compression.")
     printer.unknown_file(file)
     os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} '{target_folder}/{file}'")
     return f'{target_folder}/{file}'

@@ -38,5 +38,5 @@ def files(source, dest, dest_ext, comment):
 
 def unknown_file(file):
 
-    print(clean_str(f"\r[COMP] \033[0;33m{file}\033[0m"))
+    print(clean_str(f"\r[COMP] \033[0;33m{file}\033[0m (File extension not recognized)"))
     bar.next()

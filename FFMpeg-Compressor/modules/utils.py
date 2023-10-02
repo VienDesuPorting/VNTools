@@ -3,6 +3,8 @@ from shutil import copyfile
 from glob import glob
 import os
 
+errors_count = 0
+
 
 def get_dir_size(directory, files):
     total_size = 0
@@ -42,11 +44,14 @@ def get_compression_status(orig_folder):
             if not os.path.splitext(file)[1].count(" (copy)"):
                 comp_folder_len += 1
 
+    if errors_count != 0:
+        printer.warning("Some files failed to compress!")
+
     if orig_folder_len == comp_folder_len:
         printer.info("Success!")
         get_compression(orig_folder, f"{orig_folder}_compressed")
     else:
-        printer.warning("Some files failed to compress!")
+        printer.warning("Original and compressed folders are not identical!")
         get_compression(orig_folder, f"{orig_folder}_compressed")
 
 
@@ -65,6 +70,14 @@ def add_unprocessed_files(orig_folder):
                 if not len(glob(f"{folder}_compressed/{os.path.splitext(file)[0]}*")):
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
                     printer.info(f"File {file} copied to compressed folder.")
+
+
+def check_file_existing(folder, file):
+    if not len(glob(f"{folder}/{os.path.splitext(file)[0]}*")):
+        global errors_count
+        errors_count += 1
+        printer.error(f"{file} not processed. It can be ffmpeg error or file type is unsupported. "
+                      f"You can set '-loglevel error' in ffmpeg config to see full error.")
 
 
 def help_message():
