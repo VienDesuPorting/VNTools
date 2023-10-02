@@ -18,7 +18,7 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 * BitRate - (mp3 only, for now) Required audio bitrate. For best quality use `320k` value, but for worse use `1-9` (9 worst) number range.
 
 #### IMAGE section
-* Extension - Required image file extension. It supports: `.apng`, `.avif`, `.jfif`, `.pjpeg`, `.pjp`, `.svg`, `.webp`, `.jpg/.jpeg`, `.png`, `.raw`
+* Extension - Required image file extension. It supports: `.apng`, `.avif`, `.bmp`, `.jfif`, `.pjpeg`, `.pjp`, `.svg`, `.webp`, `.jpg/.jpeg`, `.png`, `.raw`
 * CompLevel - Compression level for images. Values range: `0-100` (100 - max compression, 0 - min compression)
 * JpegComp - (May be deleted in future) Compression level specific for jpeg images. Values range: `0-10` (10 - max compression, 0 - min compression)
 

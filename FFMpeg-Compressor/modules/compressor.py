@@ -16,7 +16,7 @@ def get_req_ext(file):
 
 def get_file_type(file):
     audio_ext = ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma']
-    image_ext = ['.apng', '.avif', '.jfif', '.pjpeg', '.pjp', '.svg', '.webp', '.jpg', '.jpeg', '.png', '.raw']
+    image_ext = ['.apng', '.avif', '.bmp', '.jfif', '.pjpeg', '.pjp', '.svg', '.webp', '.jpg', '.jpeg', '.png', '.raw']
     video_ext = ['.3gp' '.amv', '.avi', '.gif', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv', '.webm',
                   '.ogv']
     file_extension = os.path.splitext(file)[1]
