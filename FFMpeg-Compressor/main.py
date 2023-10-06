@@ -50,8 +50,9 @@ for folder, folders, files in os.walk(orig_folder):
                 try:
                     os.rename(comp_file, f'{folder}/{file}'.replace(orig_folder, f"{orig_folder}_compressed"))
                 except FileNotFoundError:
-                    printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file. "
-                                  f"You can change -loglevel in ffmpeg parameters to see full error.")
+                    if not configloader.config['FFMPEG']['HideErrors']:
+                        printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file. "
+                                      f"You can change -loglevel in ffmpeg parameters to see full error.")
 
 if configloader.config['FFMPEG']['CopyUnprocessed']:
     printer.info("Copying unprocessed files...")
