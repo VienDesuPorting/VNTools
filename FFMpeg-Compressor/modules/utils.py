@@ -59,7 +59,7 @@ def add_unprocessed_files(orig_folder):
     for folder, folders, files in os.walk(orig_folder):
         for file in files:
             new_folder = f"{folder}".replace(orig_folder, f"{orig_folder}_compressed")
-            if len(glob(f"{folder}/{os.path.splitext(file)[0]}*")) != 1:
+            if len(glob(f"{folder}/{os.path.splitext(file)[0]}.*")) > 1:
                 if len(glob(f"{new_folder}/{file}")):
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file} (copy)")
                     printer.warning(f'Duplicate file has been found! Check manually this files - "{file}", "{file} (copy)"')
