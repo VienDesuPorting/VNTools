@@ -1,3 +1,4 @@
+from modules import configloader
 from modules import printer
 from shutil import copyfile
 from glob import glob
@@ -76,8 +77,9 @@ def check_file_existing(folder, file):
     if not len(glob(f"{folder}/{os.path.splitext(file)[0]}*")):
         global errors_count
         errors_count += 1
-        printer.error(f"{file} not processed. It can be ffmpeg error or file type is unsupported. "
-                      f"You can set '-loglevel error' in ffmpeg config to see full error.")
+        if not configloader.config['FFMPEG']['HideErrors']:
+            printer.error(f"{file} not processed. It can be ffmpeg error or file type is unsupported. "
+                          f"You can set '-loglevel error' in ffmpeg config to see full error.")
 
 
 def help_message():
