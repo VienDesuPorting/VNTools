@@ -63,18 +63,19 @@ def add_unprocessed_files(orig_folder):
             if len(glob(f"{folder}/{os.path.splitext(file)[0]}.*")) > 1:
                 if len(glob(f"{new_folder}/{file}")):
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file} (copy)")
-                    printer.warning(f'Duplicate file has been found! Check manually this files - "{file}", "{file} (copy)"')
+                    printer.warning(
+                        f'Duplicate file has been found! Check manually this files - "{file}", "{file} (copy)"')
                 else:
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
                     printer.info(f"File {file} copied to compressed folder.")
             else:
-                if not len(glob(f"{folder}_compressed/{os.path.splitext(file)[0]}*")):
+                if not len(glob(f"{new_folder}/{os.path.splitext(file)[0]}.*")):  # Why it can't find files?!??!??!?!?
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
                     printer.info(f"File {file} copied to compressed folder.")
 
 
 def check_file_existing(folder, file):
-    if not len(glob(f"{folder}/{os.path.splitext(file)[0]}*")):
+    if not len(glob(f"{folder}/{os.path.splitext(file)[0]}.*")):
         global errors_count
         errors_count += 1
         if not configloader.config['FFMPEG']['HideErrors']:
