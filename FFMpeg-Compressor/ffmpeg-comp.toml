@@ -1,5 +1,5 @@
 [FFMPEG]
-FFmpegParams = "-n -hide_banner -loglevel quiet"
+FFmpegParams = "-n -hide_banner -loglevel quiet -hwaccel auto"
 CopyUnprocessed = false
 MimicMode = false
 HideErrors = false
