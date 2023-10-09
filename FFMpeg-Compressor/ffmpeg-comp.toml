@@ -3,6 +3,7 @@ FFmpegParams = "-n -hide_banner -loglevel quiet"
 CopyUnprocessed = false
 MimicMode = false
 HideErrors = false
+WebpRGBA = true
 
 [AUDIO]
 Extension = "mp3"

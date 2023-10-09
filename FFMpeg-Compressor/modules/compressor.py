@@ -80,6 +80,18 @@ def compress_image(folder, file, target_folder):
                       f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
         else:
             printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")
+
+    elif get_req_ext(file) == "webp" and configloader.config['FFMPEG']['WebpRGBA']:
+        if not has_transparency(Image.open(f'{folder}/{file}')):
+            printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
+            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
+                      f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
+        else:
+            printer.warning(f"{file} has transparency, but WebP RGBA disabled in config. Changing to png...")
+            printer.files(file, os.path.splitext(file)[0], "png", f"{comp_level}%")
+            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
+                      f"'{target_folder}/{os.path.splitext(file)[0]}.png'")
+
     else:
         printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
         os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
