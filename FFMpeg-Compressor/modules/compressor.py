@@ -70,13 +70,12 @@ def compress_video(folder, file, target_folder):
 def compress_image(folder, file, target_folder):
     ffmpeg_params = configloader.config['FFMPEG']['FFmpegParams']
     comp_level = configloader.config['IMAGE']['CompLevel']
-    jpg_comp = configloader.config['IMAGE']['JpegComp']
 
     if get_req_ext(file) == "jpg" or get_req_ext(file) == "jpeg":
 
         if not has_transparency(Image.open(f'{folder}/{file}')):
-            printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"level {jpg_comp}")
-            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {jpg_comp} "
+            printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
+            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {comp_level/10} "
                       f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
         else:
             printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")

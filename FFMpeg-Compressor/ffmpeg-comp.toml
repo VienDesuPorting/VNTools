@@ -12,7 +12,6 @@ BitRate = "320k"
 [IMAGE]
 Extension = "jpg"
 CompLevel = 20
-JpegComp = 3
 
 [VIDEO]
 Extension = "mp4"

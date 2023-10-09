@@ -20,7 +20,6 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 #### IMAGE section
 * Extension - Required image file extension. It supports: `.apng`, `.avif`, `.bmp`, `.jfif`, `.pjpeg`, `.pjp`, `.svg`, `.webp`, `.jpg/.jpeg`, `.png`, `.raw`
 * CompLevel - Compression level for images. Values range: `0-100` (100 - max compression, 0 - min compression)
-* JpegComp - (May be deleted in future) Compression level specific for jpeg images. Values range: `0-10` (10 - max compression, 0 - min compression)
 
 #### VIDEO section
 * Extension - Required image file extension. It supports: `.3gp`, `.amv`, `.avi`, `.gif`, `.m4v`, `.mkv`, `.mov`, `.mp4`, `.m4v`, `.mpeg`, `.mpv`, `.webm`, `.ogv`
