@@ -1,4 +1,4 @@
-#!/bin/python3
+#!python3
 import zipfile
 import os
 import shutil
