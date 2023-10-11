@@ -9,7 +9,7 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 
 ### Configuration
 #### FFMPEG section
-* FFMpegParams - Some parameters & flags for ffmpeg command line interface (default: `"-n -hide_banner -loglevel quiet -hwaccel auto"`)
+* FFMpegParams - Some parameters & flags for ffmpeg command line interface (default: `"-n -hide_banner -loglevel quiet"`)
 * CopyUnprocessed - Copy all files that failed to compress by ffmpeg to destination folder. In can helps to recreate original folder, but with compressed files.
 * MimicMode - Rename compressed file to it original name and extension. VN engines determine the file type by its header, so for example PNG file named file.jpg will be loaded as PNG file. (default: `false`)
 

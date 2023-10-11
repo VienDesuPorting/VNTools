@@ -69,7 +69,7 @@ def add_unprocessed_files(orig_folder):
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
                     printer.info(f"File {file} copied to compressed folder.")
             else:
-                if not len(glob(f"{new_folder}/{os.path.splitext(file)[0]}.*")):  # Why it can't find files?!??!??!?!?
+                if not len(glob(f"{new_folder}/{os.path.splitext(file)[0]}.*")):
                     copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
                     printer.info(f"File {file} copied to compressed folder.")
 
