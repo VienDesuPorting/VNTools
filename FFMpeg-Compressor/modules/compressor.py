@@ -1,34 +1,10 @@
-from modules import printer
 from modules import configloader
+from modules import printer
+from modules import utils
 from PIL import Image
+import pillow_avif
+import ffmpeg
 import os
-
-
-def get_req_ext(file):
-    match get_file_type(file):
-        case "audio":
-            return configloader.config['AUDIO']['Extension']
-        case "image":
-            return configloader.config['IMAGE']['Extension']
-        case "video":
-            return configloader.config['VIDEO']['Extension']
-
-
-def get_file_type(file):
-    audio_ext = ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma']
-    image_ext = ['.apng', '.avif', '.bmp', '.jfif', '.pjpeg', '.pjp', '.svg', '.webp', '.jpg', '.jpeg', '.png', '.raw']
-    video_ext = ['.3gp' '.amv', '.avi', '.gif', '.m2t', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv', '.webm',
-                  '.ogv']
-    file_extension = os.path.splitext(file)[1]
-
-    if file_extension in audio_ext:
-        return "audio"
-    elif file_extension in image_ext:
-        return "image"
-    elif file_extension in video_ext:
-        return "video"
-    else:
-        return "unknown"
 
 
 def has_transparency(img):
@@ -47,59 +23,74 @@ def has_transparency(img):
     return False
 
 
-def compress_audio(folder, file, target_folder):
-    ffmpeg_params = configloader.config['FFMPEG']['FFmpegParams']
+def compress_audio(folder, file, target_folder, extension):
     bitrate = configloader.config['AUDIO']['BitRate']
 
-    printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{bitrate}")
-    os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q:a {bitrate} "
-              f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
-    return f'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'
+    printer.files(file, os.path.splitext(file)[0], extension, f"{bitrate}")
+    try:
+        (ffmpeg
+         .input(f'{folder}/{file}')
+         .output(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}', audio_bitrate=bitrate)
+         .run(quiet=True)
+         )
+    except ffmpeg._run.Error:
+        utils.errors_count += 1
+        if not configloader.config['FFMPEG']['HideErrors']:
+            printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file.")
+    return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
-def compress_video(folder, file, target_folder):
-    ffmpeg_params = configloader.config['FFMPEG']['FFmpegParams']
+def compress_video(folder, file, target_folder, extension):
     codec = configloader.config['VIDEO']['Codec']
 
-    printer.files(file, os.path.splitext(file)[0], get_req_ext(file), codec)
-    os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -vcodec {codec} "
-              f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
-    return f'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'
+    printer.files(file, os.path.splitext(file)[0], extension, codec)
+    try:
+        (ffmpeg
+         .input(f'{folder}/{file}')
+         .output(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}', format=codec)
+         .run(quiet=True)
+         )
+    except ffmpeg._run.Error:
+        utils.errors_count += 1
+        if not configloader.config['FFMPEG']['HideErrors']:
+            printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file.")
+    return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
-def compress_image(folder, file, target_folder):
-    ffmpeg_params = configloader.config['FFMPEG']['FFmpegParams']
-    comp_level = configloader.config['IMAGE']['CompLevel']
+def compress_image(folder, file, target_folder, extension):
+    quality = configloader.config['IMAGE']['Quality']
 
-    if get_req_ext(file) == "jpg" or get_req_ext(file) == "jpeg":
+    image = Image.open(f'{folder}/{file}')
 
-        if not has_transparency(Image.open(f'{folder}/{file}')):
-            printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
-            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -q {comp_level/10} "
-                      f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
-        else:
-            printer.warning(f"{file} has transparency (.jpg not support it). Skipping...")
+    if (extension == "jpg" or extension == "jpeg" or
+            (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
 
-    elif get_req_ext(file) == "webp" and not configloader.config['FFMPEG']['WebpRGBA']:
-        if not has_transparency(Image.open(f'{folder}/{file}')):
-            printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
-            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
-                      f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
-        else:
-            printer.warning(f"{file} has transparency, but WebP RGBA disabled in config. Changing to png...")
-            printer.files(file, os.path.splitext(file)[0], "png", f"{comp_level}%")
-            os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
-                      f"'{target_folder}/{os.path.splitext(file)[0]}.png'")
+        if has_transparency(Image.open(f'{folder}/{file}')):
+            printer.warning(f"{file} has transparency. Changing to png...")
+            printer.files(file, os.path.splitext(file)[0], "png", f"{quality}%")
+            image.save(f"{target_folder}/{os.path.splitext(file)[0]}.png",
+                       optimize=True,
+                       quality=quality)
+            return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
     else:
-        printer.files(file, os.path.splitext(file)[0], get_req_ext(file), f"{comp_level}%")
-        os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} -compression_level {comp_level} "
-                  f"'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'")
-    return f'{target_folder}/{os.path.splitext(file)[0]}.{get_req_ext(file)}'
+        printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
+        image.save(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}",
+                   optimize=True,
+                   quality=quality)
+    return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
 def compress(folder, file, target_folder):
-    ffmpeg_params = configloader.config['FFMPEG']['FFmpegParams']
     printer.unknown_file(file)
-    os.system(f"ffmpeg -i '{folder}/{file}' {ffmpeg_params} '{target_folder}/{file}'")
+    try:
+        (ffmpeg
+         .input(f'{folder}/{file}')
+         .output(f'{target_folder}/{file}')
+         .run(quiet=True)
+         )
+    except ffmpeg._run.Error:
+        utils.errors_count += 1
+        if not configloader.config['FFMPEG']['HideErrors']:
+            printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file.")
     return f'{target_folder}/{file}'

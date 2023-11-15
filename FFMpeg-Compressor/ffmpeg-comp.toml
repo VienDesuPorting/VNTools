@@ -1,18 +1,17 @@
 [FFMPEG]
-FFmpegParams = "-n -hide_banner -loglevel quiet"
 CopyUnprocessed = false
 MimicMode = false
 HideErrors = false
 WebpRGBA = true
 
 [AUDIO]
-Extension = "mp3"
+Extension = "opus"
 BitRate = "320k"
 
 [IMAGE]
-Extension = "jpg"
-CompLevel = 20
+Extension = "avif"
+Quality = 20
 
 [VIDEO]
-Extension = "mp4"
+Extension = "webm"
 Codec = "libvpx-vp9"

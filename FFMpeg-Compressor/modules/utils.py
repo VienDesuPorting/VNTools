@@ -74,14 +74,5 @@ def add_unprocessed_files(orig_folder):
                     printer.info(f"File {file} copied to compressed folder.")
 
 
-def check_file_existing(folder, file):
-    if not len(glob(f"{folder}/{os.path.splitext(file)[0]}.*")):
-        global errors_count
-        errors_count += 1
-        if not configloader.config['FFMPEG']['HideErrors']:
-            printer.error(f"{file} not processed. It can be ffmpeg error or file type is unsupported. "
-                          f"You can set '-loglevel error' in ffmpeg config to see full error.")
-
-
 def help_message():
     return "Usage: ffmpeg-comp {folder}"
