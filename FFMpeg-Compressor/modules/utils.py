@@ -21,14 +21,11 @@ def get_compression(orig, comp):
     for folder, folders, files in os.walk(comp):
         for file in files:
             processed_files.append(file)
-
     try:
-        comp = 100 - int((get_dir_size(comp, processed_files) / get_dir_size(orig, processed_files)) * 100)
-        if comp < 0:
-            printer.warning(f'Compression: {comp}%')
-            printer.warning("The resulting files are larger than the original ones!")
-        else:
-            printer.info(f'Compression: {comp}%')
+        orig = get_dir_size(orig, processed_files)
+        comp = get_dir_size(comp, processed_files)
+
+        print(f"Result: {orig/1024/1024:.2}MB -> {comp/1024/1024:.2}MB Δ {(orig - comp)/1024/1024:.2}MB")
     except ZeroDivisionError:
         printer.warning("Nothing compressed!")
 
