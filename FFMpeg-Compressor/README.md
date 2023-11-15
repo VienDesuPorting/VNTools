@@ -31,3 +31,4 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 * [ ] Cross platform (Easy Windows usage and binaries, MacOS binaries)
 * [x] Use ffmpeg python bindings instead of cli commands
 * [ ] Reorganize code
+* [ ] Multithread

@@ -10,7 +10,7 @@ BitRate = "320k"
 
 [IMAGE]
 Extension = "avif"
-Quality = 20
+Quality = 80
 
 [VIDEO]
 Extension = "webm"
