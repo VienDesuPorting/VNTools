@@ -77,6 +77,7 @@ def compress_image(folder, file, target_folder, extension):
         printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
         image.save(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}",
                    optimize=True,
+                   lossless=configloader.config['IMAGE']['Lossless'],
                    quality=quality)
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 

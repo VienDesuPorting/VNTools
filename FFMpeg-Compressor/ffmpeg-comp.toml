@@ -10,6 +10,7 @@ BitRate = "320k"
 
 [IMAGE]
 Extension = "avif"
+Lossless = false
 Quality = 80
 
 [VIDEO]

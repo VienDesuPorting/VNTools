@@ -20,6 +20,7 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 
 #### IMAGE section
 * Extension - Required image file extension. It supports: `.apng`, `.avif`, `.bmp`, `.tga`, `.tiff`, `.dds`, `.svg`, `.webp`, `.jpg/.jpeg`, `.png`
+* Lossless - Enables lossless copression for supported formats. With this quality parameter means quality of compression. (default: `false`)
 * Quality - Quality level of images. Values range: `0-100` (100 - best quality, 0 - worst quality)
 
 #### VIDEO section
