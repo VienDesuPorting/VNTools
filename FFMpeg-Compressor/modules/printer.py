@@ -32,9 +32,9 @@ def files(source, dest, dest_ext, comment):
     source_name = os.path.splitext(source)[0]
 
     print(clean_str(f"\r* \033[0;37m{source_name}\033[0m{source_ext}\033[0;37m -> {dest}\033[0m.{dest_ext}\033[0;37m ({comment})\033[0m"))
-    bar.next()
+    #bar.next()
 
 
 def unknown_file(file):
     print(clean_str(f"\r* \033[0;33m{file}\033[0m (Not recognized)"))
-    bar.next()
+    #bar.next()

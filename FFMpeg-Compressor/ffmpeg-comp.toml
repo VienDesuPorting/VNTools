@@ -3,6 +3,7 @@ CopyUnprocessed = false
 MimicMode = false
 HideErrors = false
 WebpRGBA = true
+Threads = 1
 
 [AUDIO]
 Extension = "opus"
