@@ -47,7 +47,7 @@ def compress_video(folder, file, target_folder, extension):
     try:
         (ffmpeg
          .input(f'{folder}/{file}')
-         .output(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}', format=codec)
+         .output(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}', vcodec=codec)
          .run(quiet=True)
          )
     except ffmpeg._run.Error:
@@ -64,7 +64,7 @@ def compress_image(folder, file, target_folder, extension):
 
     if (extension == "jpg" or extension == "jpeg" or extension == "avif" or
             (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
-        if has_transparency(Image.open(f'{folder}/{file}')):
+        if has_transparency(image):
             printer.warning(f"{file} has transparency. Changing to fallback...")
             extension = configloader.config['IMAGE']['FallBackExtension']
 
