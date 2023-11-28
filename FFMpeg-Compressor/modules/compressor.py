@@ -62,11 +62,11 @@ def compress_image(folder, file, target_folder, extension):
 
     image = Image.open(f'{folder}/{file}')
 
-    if (extension == "jpg" or extension == "jpeg" or
+    if (extension == "jpg" or extension == "jpeg" or extension == "avif" or
             (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
         if has_transparency(Image.open(f'{folder}/{file}')):
-            printer.warning(f"{file} has transparency. Changing to png...")
-            extension = ".png"
+            printer.warning(f"{file} has transparency. Changing to fallback...")
+            extension = configloader.config['IMAGE']['FallBackExtension']
 
     printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
     image.save(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}",

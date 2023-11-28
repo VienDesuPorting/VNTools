@@ -10,6 +10,7 @@ BitRate = "320k"
 
 [IMAGE]
 Extension = "avif"
+FallBackExtension = "webp"
 Lossless = false
 Quality = 80
 
