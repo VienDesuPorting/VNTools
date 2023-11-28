@@ -64,23 +64,16 @@ def compress_image(folder, file, target_folder, extension):
 
     if (extension == "jpg" or extension == "jpeg" or
             (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
-
         if has_transparency(Image.open(f'{folder}/{file}')):
             printer.warning(f"{file} has transparency. Changing to png...")
-            printer.files(file, os.path.splitext(file)[0], "png", f"{quality}%")
-            image.save(f"{target_folder}/{os.path.splitext(file)[0]}.png",
-                       optimize=True,
-                       minimize_size=True,
-                       quality=quality)
-            return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
+            extension = ".png"
 
-    else:
-        printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
-        image.save(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}",
-                   optimize=True,
-                   lossless=configloader.config['IMAGE']['Lossless'],
-                   quality=quality,
-                   minimize_size=True)
+    printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
+    image.save(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}",
+               optimize=True,
+               lossless=configloader.config['IMAGE']['Lossless'],
+               quality=quality,
+               minimize_size=True)
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
