@@ -71,7 +71,4 @@ if __name__ == "__main__":
                     except FileNotFoundError:
                         pass
 
-    if configloader.config['FFMPEG']['CopyUnprocessed']:
-        printer.info("Copying unprocessed files...")
-        utils.add_unprocessed_files(orig_folder)
     utils.get_compression_status(orig_folder)

@@ -30,13 +30,15 @@ def compress_audio(folder, file, target_folder, extension):
     try:
         (ffmpeg
          .input(f'{folder}/{file}')
-         .output(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}', audio_bitrate=bitrate)
+         .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
+                 audio_bitrate=bitrate)
          .run(quiet=True)
          )
-    except ffmpeg._run.Error:
+    except ffmpeg._run.Error as e:
+        utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
         utils.errors_count += 1
         if not configloader.config['FFMPEG']['HideErrors']:
-            printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file.")
+            printer.error(f"File {file} can't be processed! Error: {e}")
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
@@ -47,33 +49,39 @@ def compress_video(folder, file, target_folder, extension):
     try:
         (ffmpeg
          .input(f'{folder}/{file}')
-         .output(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}', vcodec=codec)
+         .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'), vcodec=codec)
          .run(quiet=True)
          )
-    except ffmpeg._run.Error:
+    except ffmpeg._run.Error as e:
+        utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
         utils.errors_count += 1
         if not configloader.config['FFMPEG']['HideErrors']:
-            printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file.")
+            printer.error(f"File {file} can't be processed! Error: {e}")
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
 def compress_image(folder, file, target_folder, extension):
     quality = configloader.config['IMAGE']['Quality']
-
-    image = Image.open(f'{folder}/{file}')
-
-    if (extension == "jpg" or extension == "jpeg" or extension == "avif" or
-            (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
-        if has_transparency(image):
-            printer.warning(f"{file} has transparency. Changing to fallback...")
-            extension = configloader.config['IMAGE']['FallBackExtension']
-
     printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
-    image.save(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}",
-               optimize=True,
-               lossless=configloader.config['IMAGE']['Lossless'],
-               quality=quality,
-               minimize_size=True)
+    try:
+        image = Image.open(f'{folder}/{file}')
+
+        if (extension == "jpg" or extension == "jpeg" or extension == "avif" or
+                (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
+            if has_transparency(image):
+                printer.warning(f"{file} has transparency. Changing to fallback...")
+                extension = configloader.config['IMAGE']['FallBackExtension']
+
+        image.save(utils.check_duplicates(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}"),
+                   optimize=True,
+                   lossless=configloader.config['IMAGE']['Lossless'],
+                   quality=quality,
+                   minimize_size=True)
+    except Exception as e:
+        utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+        utils.errors_count += 1
+        if not configloader.config['FFMPEG']['HideErrors']:
+            printer.error(f"File {file} can't be processed! Error: {e}")
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
@@ -85,8 +93,9 @@ def compress(folder, file, target_folder):
          .output(f'{target_folder}/{file}')
          .run(quiet=True)
          )
-    except ffmpeg._run.Error:
+    except ffmpeg._run.Error as e:
+        utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
         utils.errors_count += 1
         if not configloader.config['FFMPEG']['HideErrors']:
-            printer.error(f"File {file} can't be processed! Maybe it is ffmpeg error or unsupported file.")
+            printer.error(f"File {file} can't be processed! Error: {e}")
     return f'{target_folder}/{file}'

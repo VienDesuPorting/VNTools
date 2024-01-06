@@ -53,22 +53,21 @@ def get_compression_status(orig_folder):
         get_compression(orig_folder, f"{orig_folder}_compressed")
 
 
-def add_unprocessed_files(orig_folder):
-    for folder, folders, files in os.walk(orig_folder):
-        for file in files:
-            new_folder = f"{folder}".replace(orig_folder, f"{orig_folder}_compressed")
-            if len(glob(f"{folder}/{os.path.splitext(file)[0]}.*")) > 1:
-                if len(glob(f"{new_folder}/{file}")):
-                    copyfile(f"{folder}/{file}", f"{new_folder}/{file} (copy)")
-                    printer.warning(
-                        f'Duplicate file has been found! Check manually this files - "{file}", "{file} (copy)"')
-                else:
-                    copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
-                    printer.info(f"File {file} copied to compressed folder.")
-            else:
-                if not len(glob(f"{new_folder}/{os.path.splitext(file)[0]}.*")):
-                    copyfile(f"{folder}/{file}", f"{new_folder}/{file}")
-                    printer.info(f"File {file} copied to compressed folder.")
+def add_unprocessed_file(orig_folder, new_folder):
+    if configloader.config['FFMPEG']['CopyUnprocessed']:
+        filename = orig_folder.split().pop()
+        copyfile(orig_folder, new_folder)
+        printer.info(f"File {filename} copied to compressed folder.")
+
+
+def check_duplicates(new_folder):
+    filename = new_folder.split().pop()
+    if os.path.exists(new_folder):
+        printer.warning(
+            f'Duplicate file has been found! Check manually this files - "{filename}", '
+            f'"{os.path.splitext(filename)[0] + "(copy)" + os.path.splitext(filename)[1]}"')
+        return os.path.splitext(new_folder)[0] + "(copy)" + os.path.splitext(new_folder)[1]
+    return new_folder
 
 
 def help_message():
