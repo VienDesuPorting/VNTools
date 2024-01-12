@@ -1,4 +1,4 @@
-#!python3
+#!/bin/env python3
 
 from modules import configloader
 from modules import compressor
