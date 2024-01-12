@@ -30,7 +30,7 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 
 ### TODO (for testing branch)
 * [x] Recreate whole game directory with compressed files
-* [ ] Cross platform (Easy Windows usage and binaries, MacOS binaries)
+* [x] Cross platform (Easy Windows usage and binaries, MacOS binaries)
 * [x] Use ffmpeg python bindings instead of cli commands
 * [ ] Reorganize code
 * [ ] Multithread
