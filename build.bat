@@ -8,6 +8,8 @@ xcopy FFMpeg-Compressor\ffmpeg-comp.toml output\bin /Y
 move /Y output\ffmpeg-comp.exe output\bin
 python -m nuitka --jobs=%NUMBER_OF_PROCESSORS% --output-dir=output --follow-imports --onefile --output-filename=rendroid-unpack RenPy-Android-Unpack\unpack.py || goto :exit
 move /Y output\rendroid-unpack.exe output\bin
+python -m nuitka --jobs=%NUMBER_OF_PROCESSORS% --output-dir=output --follow-imports --onefile --output-filename=vnds2renpy VNDS-to-RenPy/convert.py || goto :exit
+move /Y output\vnds2renpy.exe output\bin
 
 :exit
 pause

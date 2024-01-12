@@ -1,5 +1,5 @@
 #!/bin/bash
-sed -e
+set -e
 mkdir -p output
 mkdir -p output/bin
 python3 -m pip install -r FFMpeg-Compressor/requirements.txt
@@ -13,3 +13,5 @@ cp FFMpeg-Compressor/ffmpeg-comp.toml output/bin
 mv output/ffmpeg-comp output/bin
 python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=rendroid-unpack RenPy-Android-Unpack/unpack.py
 mv output/rendroid-unpack output/bin
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnds2renpy VNDS-to-RenPy/convert.py
+mv output/vnds2renpy output/bin
