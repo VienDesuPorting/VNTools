@@ -1,7 +1,7 @@
 from modules import configloader
 from modules import printer
 from shutil import copyfile
-from glob import glob
+import sys
 import os
 
 errors_count = 0
@@ -68,6 +68,11 @@ def check_duplicates(new_folder):
             f'"{os.path.splitext(filename)[0] + "(copy)" + os.path.splitext(filename)[1]}"')
         return os.path.splitext(new_folder)[0] + "(copy)" + os.path.splitext(new_folder)[1]
     return new_folder
+
+
+def sys_pause():
+    if sys.platform == "win32":
+        os.system("pause")
 
 
 def help_message():

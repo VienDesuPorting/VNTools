@@ -26,6 +26,7 @@ def get_file_type(filename):
 
 
 if __name__ == "__main__":
+    utils.win_ascii_esc()
     try:
         if sys.argv[1][len(sys.argv[1])-1] == "/":
             arg_path = sys.argv[1][:len(sys.argv[1])-1]
@@ -35,8 +36,8 @@ if __name__ == "__main__":
         print(utils.help_message())
         exit()
 
-    orig_folder = arg_path
-    printer.orig_folder = arg_path
+    orig_folder = os.path.abspath(arg_path)
+    printer.orig_folder = os.path.abspath(arg_path)
 
     printer.bar_init(orig_folder)
 
@@ -72,3 +73,4 @@ if __name__ == "__main__":
                         pass
 
     utils.get_compression_status(orig_folder)
+    utils.sys_pause()

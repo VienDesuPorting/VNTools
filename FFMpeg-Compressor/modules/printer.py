@@ -1,5 +1,7 @@
-import os
 from progress.bar import IncrementalBar
+import colorama
+import sys
+import os
 
 
 # Fill whole string with spaces for cleaning progress bar
@@ -38,3 +40,8 @@ def files(source, dest, dest_ext, comment):
 def unknown_file(file):
     print(clean_str(f"\r* \033[0;33m{file}\033[0m (Not recognized)"))
     bar.next()
+
+
+def win_ascii_esc():
+    if sys.platform == "win32":
+        colorama.init()
