@@ -26,7 +26,7 @@ def get_file_type(filename):
 
 
 if __name__ == "__main__":
-    utils.win_ascii_esc()
+    printer.win_ascii_esc()
     try:
         if sys.argv[1][len(sys.argv[1])-1] == "/":
             arg_path = sys.argv[1][:len(sys.argv[1])-1]
