@@ -38,7 +38,7 @@ def files(source, dest, dest_ext, comment):
 
 
 def unknown_file(file):
-    print(clean_str(f"\r* \033[0;33m{file}\033[0m (Not recognized)"))
+    print(clean_str(f"\r* \033[0;33m{file}\033[0m (File will be force compressed wia ffmpeg)"))
     bar.next()
 
 

@@ -86,16 +86,19 @@ def compress_image(folder, file, target_folder, extension):
 
 
 def compress(folder, file, target_folder):
-    printer.unknown_file(file)
-    try:
-        (ffmpeg
-         .input(f'{folder}/{file}')
-         .output(f'{target_folder}/{file}')
-         .run(quiet=True)
-         )
-    except ffmpeg._run.Error as e:
+    if configloader.config["FFMPEG"]["ForceCompress"]:
+        printer.unknown_file(file)
+        try:
+            (ffmpeg
+             .input(f'{folder}/{file}')
+             .output(f'{target_folder}/{file}')
+             .run(quiet=True)
+             )
+        except ffmpeg._run.Error as e:
+            utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+            utils.errors_count += 1
+            if not configloader.config['FFMPEG']['HideErrors']:
+                printer.error(f"File {file} can't be processed! Error: {e}")
+    else:
         utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
-        utils.errors_count += 1
-        if not configloader.config['FFMPEG']['HideErrors']:
-            printer.error(f"File {file} can't be processed! Error: {e}")
     return f'{target_folder}/{file}'

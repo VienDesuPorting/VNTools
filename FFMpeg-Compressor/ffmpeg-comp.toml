@@ -1,5 +1,6 @@
 [FFMPEG]
 CopyUnprocessed = false
+ForceCompress = false
 MimicMode = false
 HideErrors = false
 WebpRGBA = true
