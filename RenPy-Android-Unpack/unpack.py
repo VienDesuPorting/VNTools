@@ -1,4 +1,5 @@
 #!python3
+from PIL import Image
 import colorama
 import zipfile
 import shutil
@@ -17,20 +18,38 @@ def printer(msg, level):
             exit()
 
 
+def extract_folder(zip_ref, path, dest):
+    for content in zip_ref.namelist():
+        if content.split('/')[0] == path:
+            zip_ref.extract(content, dest)
+
+
+def find_modern_icon(directory):
+    icons = []
+    for folder, folders, files in os.walk(directory):
+        for file in os.listdir(folder):
+            if os.path.splitext(file)[1] == ".png":
+                image = Image.open(f"{folder}/{file}")
+                if image.size[0] == 432 and image.size[1] == 432:
+                    icons.append(f"{folder}/{file}")
+    if len(icons) == 0:
+        raise KeyError
+    return icons
+
+
 def extract_assets(file):
     try:
         with zipfile.ZipFile(file, 'r') as zip_ref:
-            for content in zip_ref.namelist():
-                if content.split('/')[0] == 'assets':
-                    zip_ref.extract(content)
+            extract_folder(zip_ref, 'assets', '')
             if os.path.splitext(file)[1] == '.apk':
                 try:
-                    zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_background.png', 'assets')
-                    zip_ref.extract('res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets')
-                    os.rename('assets/res/mipmap-xxxhdpi-v4/icon_background.png', 'assets/android-icon_background.png')
-                    os.rename('assets/res/mipmap-xxxhdpi-v4/icon_foreground.png', 'assets/android-icon_foreground.png')
+                    # ~Ren'Py 8, 7
+                    extract_folder(zip_ref, 'res', 'assets')
+                    for icon in find_modern_icon('assets/res'):
+                        os.rename(icon, f"assets/{os.path.split(icon)[1]}")
                 except KeyError:
                     try:
+                        # ~Ren'Py 6
                         zip_ref.extract('res/drawable/icon.png', 'assets')
                         os.rename('assets/res/drawable/icon.png', 'assets/icon.png')
                     except KeyError:
@@ -82,7 +101,8 @@ if __name__ == '__main__':
             rename_dirs('assets')
             printer('Removing unneeded files... ', "info")
             if os.path.splitext(filename)[1] == '.apk':
-                remove_unneeded(['assets/renpy', 'assets/res', 'assets/dexopt'], False)
+                remove_unneeded(['assets/renpy', 'assets/res'], False)
+                remove_unneeded(['assets/dexopt'], True)
             printer('Renaming directory... ', "info")
             remove_unneeded([os.path.splitext(filename)[0]], True)
             os.rename('assets', os.path.splitext(filename)[0])
