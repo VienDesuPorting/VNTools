@@ -3,6 +3,7 @@ set -e
 mkdir -p output
 mkdir -p output/bin
 python3 -m pip install -r FFMpeg-Compressor/requirements.txt
+python3 -m pip install -r RenPy-Android-Unpack/requirements.txt
 python3 -m pip install Nuitka
 case "$(uname -s)" in
     Linux*)     jobs="--jobs=$(nproc)";;
