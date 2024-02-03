@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Automatically converts VNDS to Ren'Py.
 
@@ -37,7 +36,7 @@ def scan_setvar(l):
 
 with zipfile.ZipFile("script.zip", 'r') as zip_ref:
     zip_ref.extractall()
-    
+
 def scan_script(infn):
     inf = open("script/" + infn, encoding="utf-8")
     
@@ -108,7 +107,7 @@ def convert_goto(cs, l):
     l = l.replace("-", "_")
 
     cs.write("jump %s", l)
-    
+
 def convert_choice(cs, l):
     choices = l.split("|")
     
@@ -158,7 +157,7 @@ def convert_gsetvar(cs, l):
         cs.write("$ persistent.%s -= %s", var, val)
     else:
         raise Exception("Unknown operation " + op)
-    
+
 def convert_if(cs, l):
     var, rest = l.strip().split(' ', 1)
     var = unjp(var)
@@ -170,7 +169,7 @@ def convert_if(cs, l):
     cs.indent()
 
     cs.empty_block = True
-    
+
 def convert_fi(cs, l):
     if cs.empty_block:
         cs.write("pass")
@@ -192,7 +191,7 @@ def convert_setimg(cs, l):
 
     cs.write("show expression %r as i%d at fgpos(%d, %d)", fn, cs.imindex, x, y)
     cs.imindex += 1
-    
+
 def convert_delay(cs, l):
     try:
         t = int(l) / 60.0
@@ -200,8 +199,8 @@ def convert_delay(cs, l):
     except:
         pass
     
-    
-        
+
+
 def convert_bgload(cs, fn):
 
     if " " in fn:
@@ -219,7 +218,7 @@ def convert_bgload(cs, fn):
 
     if delay:
         cs.write("with Dissolve(%f)", delay)
-    
+
 def convert_jump(cs, fn):
     if " " in fn:
         fn, l = fn.split(" ", 1)
@@ -231,7 +230,7 @@ def convert_jump(cs, fn):
 
     fn = fn.replace(".scr", "").replace("-", "_")
     cs.write("jump %s", fn)
-        
+
 def convert_music(cs, fn):
     if " " in fn:
         fn, loops = fn.split(" ", 1)
@@ -248,7 +247,7 @@ def convert_music(cs, fn):
     else:
         fn = "sound/" + fn
         cs.write("play music %r%s", fn, noloop)
-        
+
 def convert_text(cs, text):
 
     while text and (text[0] == "~" or text[0] == "!"):
