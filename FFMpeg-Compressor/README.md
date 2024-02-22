@@ -9,15 +9,15 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 
 ### Configuration
 #### FFMPEG section
-* CopyUnprocessed - Copy all files that failed to compress by ffmpeg to destination folder. In can helps to recreate original folder, but with compressed files.
+* CopyUnprocessed - Copy all files that failed to compress by ffmpeg to destination folder. In can helps to recreate original folder, but with compressed files. (default: `true`)
 * ForceCompress - Force try to compress all files in directory via ffmpeg. (default: `false`)
-* MimicMode - Rename compressed file to it original name and extension. VN engines determine the file type by its header, so for example PNG file named file.jpg will be loaded as PNG file. (default: `false`)
-* HideErrors - Hide some errors about compression. (default: `false`)
+* MimicMode - Rename compressed file to it original name and extension. VN engines determine the file type by its header, so for example PNG file named file.jpg will be loaded as PNG file. (default: `true`)
+* HideErrors - Hide some errors about compression. (default: `true`)
 * WebpRGBA - Alpha channel in webp. If false switches extension to png. (default: `true`)
 
 #### AUDIO section
 * Extension - Required audio file extension. It supports: `.aac`, `.flac`, `.m4a`, `.mp3`, `.ogg`, `.opus`, `.raw`, `.wav`, `.wma`.
-* BitRate - (mp3 only, for now) Required audio bitrate. For best quality use `320k` value, but for worse use `1-9` (9 worst) number range.
+* BitRate - Required audio bitrate. For best quality use `320k` value.
 
 #### IMAGE section
 * Extension - Required image file extension. It supports: `.apng`, `.avif`, `.bmp`, `.tga`, `.tiff`, `.dds`, `.svg`, `.webp`, `.jpg/.jpeg`, `.png`

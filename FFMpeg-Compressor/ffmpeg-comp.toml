@@ -1,13 +1,13 @@
 [FFMPEG]
-CopyUnprocessed = false
+CopyUnprocessed = true
 ForceCompress = false
-MimicMode = false
-HideErrors = false
+MimicMode = true
+HideErrors = true
 WebpRGBA = true
 
 [AUDIO]
 Extension = "opus"
-BitRate = "320k"
+BitRate = "128k"
 
 [IMAGE]
 Extension = "avif"
