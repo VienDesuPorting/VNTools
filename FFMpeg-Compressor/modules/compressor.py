@@ -66,12 +66,17 @@ def compress_image(folder, file, target_folder, extension):
     try:
         image = Image.open(f'{folder}/{file}')
 
+        width, height = image.size
+        res_downscale = configloader.config['IMAGE']['ResDownScale']
+        new_size = (int(width / res_downscale), int(height / res_downscale))
+
         if (extension == "jpg" or extension == "jpeg" or extension == "avif" or
                 (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
             if has_transparency(image):
                 printer.warning(f"{file} has transparency. Changing to fallback...")
                 extension = configloader.config['IMAGE']['FallBackExtension']
 
+        image = image.resize(new_size)
         image.save(utils.check_duplicates(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}"),
                    optimize=True,
                    lossless=configloader.config['IMAGE']['Lossless'],

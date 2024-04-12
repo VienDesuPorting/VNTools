@@ -10,10 +10,11 @@ Extension = "opus"
 BitRate = "128k"
 
 [IMAGE]
+ResDownScale = 1
 Extension = "avif"
 FallBackExtension = "webp"
-Lossless = false
-Quality = 80
+Lossless = true
+Quality = 100
 
 [VIDEO]
 Extension = "webm"
