@@ -43,20 +43,23 @@ def compress_audio(folder, file, target_folder, extension):
 
 
 def compress_video(folder, file, target_folder, extension):
-    codec = configloader.config['VIDEO']['Codec']
+    if not configloader.config['VIDEO']['SkipVideo']:
+        codec = configloader.config['VIDEO']['Codec']
 
-    printer.files(file, os.path.splitext(file)[0], extension, codec)
-    try:
-        (ffmpeg
-         .input(f'{folder}/{file}')
-         .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'), vcodec=codec)
-         .run(quiet=True)
-         )
-    except ffmpeg._run.Error as e:
+        printer.files(file, os.path.splitext(file)[0], extension, codec)
+        try:
+            (ffmpeg
+             .input(f'{folder}/{file}')
+             .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'), vcodec=codec)
+             .run(quiet=True)
+             )
+        except ffmpeg._run.Error as e:
+            utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+            utils.errors_count += 1
+            if not configloader.config['FFMPEG']['HideErrors']:
+                printer.error(f"File {file} can't be processed! Error: {e}")
+    else:
         utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
-        utils.errors_count += 1
-        if not configloader.config['FFMPEG']['HideErrors']:
-            printer.error(f"File {file} can't be processed! Error: {e}")
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
