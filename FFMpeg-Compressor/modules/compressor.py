@@ -3,7 +3,7 @@ from modules import printer
 from modules import utils
 from PIL import Image
 import pillow_avif
-import ffmpeg
+from ffmpeg import FFmpeg, FFmpegError
 import os
 
 
@@ -28,13 +28,13 @@ def compress_audio(folder, file, target_folder, extension):
 
     printer.files(file, os.path.splitext(file)[0], extension, f"{bitrate}")
     try:
-        (ffmpeg
+        (FFmpeg()
          .input(f'{folder}/{file}')
          .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
-                 audio_bitrate=bitrate)
-         .run(quiet=True)
+                 {"b:a": bitrate})
+         .execute()
          )
-    except ffmpeg._run.Error as e:
+    except FFmpegError as e:
         utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
         utils.errors_count += 1
         if not configloader.config['FFMPEG']['HideErrors']:
@@ -45,15 +45,17 @@ def compress_audio(folder, file, target_folder, extension):
 def compress_video(folder, file, target_folder, extension):
     if not configloader.config['VIDEO']['SkipVideo']:
         codec = configloader.config['VIDEO']['Codec']
+        crf = configloader.config['VIDEO']['CRF']
 
         printer.files(file, os.path.splitext(file)[0], extension, codec)
         try:
-            (ffmpeg
+            (FFmpeg()
              .input(f'{folder}/{file}')
-             .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'), vcodec=codec)
-             .run(quiet=True)
+             .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
+                     {"codec:v": codec, "v:b": 0}, crf=crf)
+             .execute()
              )
-        except ffmpeg._run.Error as e:
+        except FFmpegError as e:
             utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
             utils.errors_count += 1
             if not configloader.config['FFMPEG']['HideErrors']:
@@ -97,12 +99,12 @@ def compress(folder, file, target_folder):
     if configloader.config["FFMPEG"]["ForceCompress"]:
         printer.unknown_file(file)
         try:
-            (ffmpeg
+            (FFmpeg()
              .input(f'{folder}/{file}')
              .output(f'{target_folder}/{file}')
-             .run(quiet=True)
+             .execute()
              )
-        except ffmpeg._run.Error as e:
+        except FFmpegError as e:
             utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
             utils.errors_count += 1
             if not configloader.config['FFMPEG']['HideErrors']:

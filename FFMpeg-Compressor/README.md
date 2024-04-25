@@ -27,6 +27,7 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 * Quality - Quality level of images. Values range: `0-100` (100 - best quality, 0 - worst quality)
 
 #### VIDEO section
+* CRF ("Constant Quality") - Video quality parameter for ffmpeg. The CRF value can be from 0 to 63. Lower values mean better quality. Recommended values range from 15 to 35, with 31 being recommended for 1080p HD video. (default: `27`)
 * SkipVideo - Skip processing all video files. (default: `false`)
 * Extension - Required image file extension. It supports: `.3gp`, `.amv`, `.avi`, `.gif`, `.m2l`, `.m4v`, `.mkv`, `.mov`, `.mp4`, `.m4v`, `.mpeg`, `.mpv`, `.webm`, `.ogv`
 * Codec - (Maybe optional in future) Required video codec. (See official ffmpeg documentation for supported codecs) 

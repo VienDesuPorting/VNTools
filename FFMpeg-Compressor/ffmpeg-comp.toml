@@ -17,6 +17,7 @@ Lossless = true
 Quality = 100
 
 [VIDEO]
-SkipVideo = true
+CRF = 27
+SkipVideo = false
 Extension = "webm"
 Codec = "libvpx-vp9"
