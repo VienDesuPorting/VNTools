@@ -1,5 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
+if [[ "$VIRTUAL_ENV" == "" ]]
+then
+  echo -e "Please create and activate venv before running this script: \033[100mpython3 -m venv venv && source ./venv/bin/activate\033[49m"
+  exit
+fi
+
 mkdir -p output
 mkdir -p output/bin
 python3 -m pip install -r FFMpeg-Compressor/requirements.txt
