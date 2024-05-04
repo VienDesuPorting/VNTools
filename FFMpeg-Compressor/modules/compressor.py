@@ -71,7 +71,7 @@ def compress_image(folder, file, target_folder, extension):
     try:
         image = Image.open(f'{folder}/{file}')
 
-        if (extension == "jpg" or extension == "jpeg" or extension == "avif" or
+        if (extension == "jpg" or extension == "jpeg" or
                 (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
             if has_transparency(image):
                 printer.warning(f"{file} has transparency. Changing to fallback...")
