@@ -4,6 +4,7 @@ from modules import configloader
 from modules import compressor
 from modules import printer
 from modules import utils
+from datetime import datetime
 import shutil
 import sys
 import os
@@ -26,6 +27,7 @@ def get_file_type(filename):
 
 
 if __name__ == "__main__":
+    start_time = datetime.now()
     printer.win_ascii_esc()
     try:
         if sys.argv[1][len(sys.argv[1])-1] == "/":
@@ -74,3 +76,4 @@ if __name__ == "__main__":
 
     utils.get_compression_status(orig_folder)
     utils.sys_pause()
+    print(f"Time taken: {datetime.now() - start_time}")
