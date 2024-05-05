@@ -7,6 +7,22 @@ from ffmpeg import FFmpeg, FFmpegError
 import os
 
 
+def get_file_type(filename):
+    audio_ext = ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma']
+    image_ext = ['.apng', '.avif', '.bmp', '.tga', '.tiff', '.dds', '.svg', '.webp', '.jpg', '.jpeg', '.png']
+    video_ext = ['.3gp' '.amv', '.avi', '.gif', '.m2t', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv',
+                 '.webm', '.ogv']
+
+    if os.path.splitext(filename)[1] in audio_ext:
+        return "audio"
+    elif os.path.splitext(filename)[1] in image_ext:
+        return "image"
+    elif os.path.splitext(filename)[1] in video_ext:
+        return "video"
+    else:
+        return "unknown"
+
+
 def has_transparency(img):
     if img.info.get("transparency", None) is not None:
         return True
@@ -113,3 +129,27 @@ def compress(folder, file, target_folder):
     else:
         utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
     return f'{target_folder}/{file}'
+
+
+def compress_file(_dir, filename, target_dir, source):
+    match get_file_type(filename):
+        case "audio":
+            comp_file = compress_audio(_dir, filename, target_dir,
+                                       configloader.config['AUDIO']['Extension'])
+        case "image":
+            comp_file = compress_image(_dir, filename, target_dir,
+                                       configloader.config['IMAGE']['Extension'])
+        case "video":
+            comp_file = compress_video(_dir, filename, target_dir,
+                                       configloader.config['VIDEO']['Extension'])
+        case "unknown":
+            comp_file = compress(_dir, filename, target_dir)
+
+    if configloader.config['FFMPEG']['MimicMode']:
+        try:
+            os.rename(comp_file, f'{_dir}/{filename}'.replace(source, f"{source}_compressed"))
+        except FileNotFoundError:
+            pass
+
+    printer.bar.update()
+    printer.bar.next()
