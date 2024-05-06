@@ -46,8 +46,9 @@ def compress_audio(folder, file, target_folder, extension):
     try:
         (FFmpeg()
          .input(f'{folder}/{file}')
+         .option("hide_banner")
          .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
-                 {"b:a": bitrate})
+                 {"b:a": bitrate, "loglevel": "error"})
          .execute()
          )
     except FFmpegError as e:
@@ -67,8 +68,9 @@ def compress_video(folder, file, target_folder, extension):
         try:
             (FFmpeg()
              .input(f'{folder}/{file}')
+             .option("hide_banner")
              .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
-                     {"codec:v": codec, "v:b": 0}, crf=crf)
+                     {"codec:v": codec, "v:b": 0, "loglevel": "error"}, crf=crf)
              .execute()
              )
         except FFmpegError as e:
