@@ -87,7 +87,7 @@ def compress_image(folder, file, target_folder, extension):
     quality = configloader.config['IMAGE']['Quality']
     printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
     try:
-        image = Image.open(f'{folder}/{file}')
+        image = Image.open(f'{folder}/{file}').convert('RGBA')
 
         if (extension == "jpg" or extension == "jpeg" or
                 (extension == "webp" and not configloader.config['FFMPEG']['WebpRGBA'])):
