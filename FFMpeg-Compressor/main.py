@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
         printer.info(f"Compressing \"{folder.replace(req_folder, req_folder.split('/').pop())}\" folder...")
         target_folder = folder.replace(req_folder, f"{req_folder}_compressed")
-        for file in os.listdir(folder):
+        for file in files:
             if os.path.isfile(f'{folder}/{file}'):
                 compressor.compress_file(folder, file, target_folder, req_folder)
 

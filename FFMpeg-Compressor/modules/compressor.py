@@ -69,6 +69,7 @@ def compress_video(folder, file, target_folder, extension):
             (FFmpeg()
              .input(f'{folder}/{file}')
              .option("hide_banner")
+             .option("hwaccel", "auto")
              .output(utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
                      {"codec:v": codec, "v:b": 0, "loglevel": "error"}, crf=crf)
              .execute()
