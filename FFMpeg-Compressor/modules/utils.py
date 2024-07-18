@@ -25,7 +25,7 @@ def get_compression(orig, comp):
         orig = get_dir_size(orig, processed_files)
         comp = get_dir_size(comp, processed_files)
 
-        print(f"\nResult: {orig/1024/1024:.2f}MB -> {comp/1024/1024:.2f}MB Δ {(orig - comp)/1024/1024:.2f}MB")
+        print(f"\nResult: {orig/1024/1024:.2f}MB -> {comp/1024/1024:.2f}MB ({(comp - orig)/1024/1024:.2f}MB)")
     except ZeroDivisionError:
         printer.warning("Nothing compressed!")
 
