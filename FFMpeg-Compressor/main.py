@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from modules.configloader import config
 from modules import compressor
 from modules import printer
 from modules import utils
@@ -21,6 +23,11 @@ def get_args():
         exit()
 
 
+def compress_worker(folder, file, target_folder, req_folder):
+    if os.path.isfile(f'{folder}/{file}'):
+        compressor.compress_file(folder, file, target_folder, req_folder)
+
+
 if __name__ == "__main__":
     start_time = datetime.now()
     printer.win_ascii_esc()
@@ -38,9 +45,14 @@ if __name__ == "__main__":
 
         printer.info(f"Compressing \"{folder.replace(req_folder, req_folder.split('/').pop())}\" folder...")
         target_folder = folder.replace(req_folder, f"{req_folder}_compressed")
-        for file in files:
-            if os.path.isfile(f'{folder}/{file}'):
-                compressor.compress_file(folder, file, target_folder, req_folder)
+
+        with ThreadPoolExecutor(max_workers=config["FFMPEG"]["Workers"]) as executor:
+            futures = [
+                executor.submit(compress_worker, folder, file, target_folder, req_folder)
+                for file in files
+            ]
+            for future in as_completed(futures):
+                future.result()
 
     utils.get_compression_status(req_folder)
     utils.sys_pause()

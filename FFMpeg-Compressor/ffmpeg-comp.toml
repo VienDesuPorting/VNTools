@@ -4,6 +4,7 @@ ForceCompress = false
 MimicMode = true
 HideErrors = true
 WebpRGBA = true
+Workers = 16
 
 [AUDIO]
 Extension = "opus"
