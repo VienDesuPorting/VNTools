@@ -55,7 +55,7 @@ def get_compression_status(orig_folder):
 
 def add_unprocessed_file(orig_folder, new_folder):
     if configloader.config['FFMPEG']['CopyUnprocessed']:
-        filename = orig_folder.split().pop()
+        filename = orig_folder.split("/").pop()
         copyfile(orig_folder, new_folder)
         printer.info(f"File {filename} copied to compressed folder.")
 

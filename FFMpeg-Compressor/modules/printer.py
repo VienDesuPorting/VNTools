@@ -24,22 +24,22 @@ def clean_str(string):
 
 
 def info(string):
-    bar_print(clean_str(f"\r\033[100mI {string}\033[49m"))
+    bar_print(clean_str(f"\r\033[100m- {string}\033[49m"))
 
 
 def warning(string):
-    bar_print(clean_str(f"\r\033[93mW\033[0m {string}\033[49m"))
+    bar_print(clean_str(f"\r\033[93m!\033[0m {string}\033[49m"))
 
 
 def error(string):
-    bar_print(clean_str(f"\r\033[31mE\033[0m {string}\033[49m"))
+    bar_print(clean_str(f"\r\033[31m\u2715\033[0m {string}\033[49m"))
 
 
 def files(source, dest, dest_ext, comment):
     source_ext = os.path.splitext(source)[1]
     source_name = os.path.splitext(source)[0]
 
-    bar_print(clean_str(f"\r* \033[0;37m{source_name}\033[0m{source_ext}\033[0;37m -> {dest}\033[0m.{dest_ext}\033[0;37m ({comment})\033[0m ..."))
+    bar_print(clean_str(f"\r\033[0;32m\u2713\033[0m \033[0;37m{source_name}\033[0m{source_ext}\033[0;37m -> {dest}\033[0m.{dest_ext}\033[0;37m ({comment})\033[0m"))
 
 
 def unknown_file(file):

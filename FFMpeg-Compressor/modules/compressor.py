@@ -41,8 +41,6 @@ def has_transparency(img):
 
 def compress_audio(folder, file, target_folder, extension):
     bitrate = configloader.config['AUDIO']['BitRate']
-
-    printer.files(file, os.path.splitext(file)[0], extension, f"{bitrate}")
     try:
         (FFmpeg()
          .input(f'{folder}/{file}')
@@ -56,6 +54,7 @@ def compress_audio(folder, file, target_folder, extension):
         utils.errors_count += 1
         if not configloader.config['FFMPEG']['HideErrors']:
             printer.error(f"File {file} can't be processed! Error: {e}")
+    printer.files(file, os.path.splitext(file)[0], extension, f"{bitrate}")
     return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
@@ -64,7 +63,6 @@ def compress_video(folder, file, target_folder, extension):
         codec = configloader.config['VIDEO']['Codec']
         crf = configloader.config['VIDEO']['CRF']
 
-        printer.files(file, os.path.splitext(file)[0], extension, codec)
         try:
             (FFmpeg()
              .input(f'{folder}/{file}')
@@ -74,6 +72,7 @@ def compress_video(folder, file, target_folder, extension):
                      {"codec:v": codec, "v:b": 0, "loglevel": "error"}, crf=crf)
              .execute()
              )
+            printer.files(file, os.path.splitext(file)[0], extension, codec)
         except FFmpegError as e:
             utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
             utils.errors_count += 1
@@ -86,7 +85,6 @@ def compress_video(folder, file, target_folder, extension):
 
 def compress_image(folder, file, target_folder, extension):
     quality = configloader.config['IMAGE']['Quality']
-    printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
     try:
         image = Image.open(f'{folder}/{file}')
 
@@ -110,6 +108,7 @@ def compress_image(folder, file, target_folder, extension):
                    lossless=configloader.config['IMAGE']['Lossless'],
                    quality=quality,
                    minimize_size=True)
+        printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
     except Exception as e:
         utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
         utils.errors_count += 1
