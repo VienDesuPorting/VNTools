@@ -4,8 +4,8 @@ import argparse
 import sys
 import os
 
-from printer import Printer
-from actions import Actions
+from .printer import Printer
+from .actions import Actions
 
 
 def args_init():
@@ -17,8 +17,7 @@ def args_init():
     parser.add_argument('-o', '--output')
     return parser.parse_args()
 
-
-if __name__ == '__main__':
+def launch():
     if sys.platform == "win32":
         colorama.init()
     args = args_init()

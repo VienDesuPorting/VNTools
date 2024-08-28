@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-from application import Application
-from compress import Compress
-from printer import Printer
-from config import Config
-from utils import Utils
+from .application import Application
+from .compress import Compress
+from .printer import Printer
+from .config import Config
+from .utils import Utils
 
 
 def init():

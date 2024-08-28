@@ -24,4 +24,5 @@ class Config:
                 config = tomllib.load(cfile)
         else:
             print("Failed to find config. Check `ffmpeg-comp -h` to more info")
+            exit(255)
         return cls(config=config, args=args)
