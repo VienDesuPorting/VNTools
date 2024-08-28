@@ -1,8 +1,25 @@
 ## VNTools
-Collection of tools used by administrators from VN Telegram Channel
+Collection of tools used by VienDesu! Porting Team
 
 ### Tools
-* `FFMpeg-Compressor` - Python utility uses ffmpeg to compress Visual Novel Resources
-* `RenPy-Android-Unpack` - A simple Python script for unpacking Ren'Py based .apk and .obb files to ready to use Ren'Py SDK's Project
+* `FFMpeg-Compressor` - Python utility to compress Visual Novel Resources
+* `RenPy-Android-Unpack` - A Python script for extracting game project from Ren'Py based .apk and .obb files
 * `RenPy-Unpacker` - Simple .rpy script that will make any RenPy game unpack itself
-* `VNDS-to-RenPy` - Simple script for converting vnds scripts to rpy
+* `VNDS-to-RenPy` - Simple script for converting VNDS engine scripts to .rpy ones
+
+### Installation
+#### Download from releases:
+  * Windows - `TODO`
+  * Linux - `TODO`
+  * MacOS - `TODO`
+
+#### Build tools as binaries:
+  * Run `./build.sh` on UNIX 
+  * Run `.\build.bat` for Windows
+  * Arch Linux - `TODO`
+  * NixOS - `TODO`
+
+#### Install as python package:
+  * Run `pip install -U .` command in project folder
+  * Arch Linux - `TODO`
+  * NixOS - `TODO`

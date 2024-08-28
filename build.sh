@@ -8,17 +8,17 @@ fi
 
 mkdir -p output
 mkdir -p output/bin
-python3 -m pip install -r FFMpeg-Compressor/requirements.txt
-python3 -m pip install -r RenPy-Android-Unpack/requirements.txt
+python3 -m pip install -r requirements.txt
 python3 -m pip install Nuitka
 case "$(uname -s)" in
     Linux*)     jobs="--jobs=$(nproc)";;
     Darwin*)    jobs="--jobs=$(sysctl -n hw.ncpu)";;
 esac
-python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=ffmpeg-comp FFMpeg-Compressor/main.py
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=ffmpeg-comp FFMpeg-Compressor/__main__.py
 cp FFMpeg-Compressor/ffmpeg-comp.toml output/bin
 mv output/ffmpeg-comp output/bin
-python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=rendroid-unpack RenPy-Android-Unpack/unpack.py
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=rendroid-unpack RenPy-Android-Unpack/__main__.py
 mv output/rendroid-unpack output/bin
-python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnds2renpy VNDS-to-RenPy/convert.py
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnds2renpy VNDS-to-RenPy/__main__.py
 mv output/vnds2renpy output/bin
+echo "Done! You can get binaries into output/bin directory"
