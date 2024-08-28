@@ -10,7 +10,7 @@ from .actions import Actions
 
 def args_init():
     parser = argparse.ArgumentParser(
-        prog='rendroid-unpack',
+        prog='unrenapk',
         description='Extract Ren\'Py .apk and .obb files into Ren\'Py SDK\'s project'
     )
     parser.add_argument('path')

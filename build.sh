@@ -14,11 +14,11 @@ case "$(uname -s)" in
     Linux*)     jobs="--jobs=$(nproc)";;
     Darwin*)    jobs="--jobs=$(sysctl -n hw.ncpu)";;
 esac
-python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=ffmpeg-comp FFMpeg-Compressor/__main__.py
-cp FFMpeg-Compressor/ffmpeg-comp.toml output/bin
-mv output/ffmpeg-comp output/bin
-python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=rendroid-unpack RenPy-Android-Unpack/__main__.py
-mv output/rendroid-unpack output/bin
-python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnds2renpy VNDS-to-RenPy/__main__.py
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnrecode vnrecode/__main__.py
+cp vnrecode/vnrecode.toml output/bin
+mv output/vnrecode output/bin
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=unrenapk unrenapk/__main__.py
+mv output/unrenapk output/bin
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnds2renpy vnds2renpy/__main__.py
 mv output/vnds2renpy output/bin
 echo "Done! You can get binaries into output/bin directory"
