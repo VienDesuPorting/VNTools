@@ -40,13 +40,13 @@ class File:
 
 class Compress:
 
-    def __init__(self, config, printer, utils):
-        self.config = config
+    def __init__(self, params, printer, utils):
+        self.params = params
         self.printer = printer
         self.utils = utils
 
     def audio(self, folder, file, target_folder, extension):
-        bitrate = self.config['AUDIO']['BitRate']
+        bitrate = self.params.audio_bitrate
         try:
             (FFmpeg()
              .input(f'{folder}/{file}')
@@ -58,16 +58,16 @@ class Compress:
         except FFmpegError as e:
             self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
             self.utils.errors += 1
-            if not self.config['FFMPEG']['HideErrors']:
+            if not self.params.hide_errors:
                 self.printer.error(f"File {file} can't be processed! Error: {e}")
         self.printer.files(file, os.path.splitext(file)[0], extension, f"{bitrate}")
         return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
     def video(self, folder, file, target_folder, extension):
-        if not self.config['VIDEO']['SkipVideo']:
-            codec = self.config['VIDEO']['Codec']
-            crf = self.config['VIDEO']['CRF']
+        if not self.params.video_skip:
+            codec = self.params.video_codec
+            crf = self.params.video_crf
 
             try:
                 (FFmpeg()
@@ -82,7 +82,7 @@ class Compress:
             except FFmpegError as e:
                 self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
                 self.utils.errors += 1
-                if not self.config['FFMPEG']['HideErrors']:
+                if not self.params.hide_errors:
                     self.printer.error(f"File {file} can't be processed! Error: {e}")
         else:
             self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
@@ -90,20 +90,20 @@ class Compress:
 
 
     def image(self, folder, file, target_folder, extension):
-        quality = self.config['IMAGE']['Quality']
+        quality = self.params.image_quality
         try:
             image = Image.open(f'{folder}/{file}')
 
             if (extension == "jpg" or extension == "jpeg" or
-                    (extension == "webp" and not self.config['FFMPEG']['WebpRGBA'])):
+                    (extension == "webp" and not self.params.webp_rgba)):
                 if File.has_transparency(image):
                     self.printer.warning(f"{file} has transparency. Changing to fallback...")
-                    extension = self.config['IMAGE']['FallBackExtension']
+                    extension = self.params.image_fall_ext
 
             if File.has_transparency(image):
                 image.convert('RGBA')
 
-            res_downscale = self.config['IMAGE']['ResDownScale']
+            res_downscale = self.params.image_downscale
             if res_downscale != 1:
                 width, height = image.size
                 new_size = (int(width / res_downscale), int(height / res_downscale))
@@ -111,20 +111,20 @@ class Compress:
 
             image.save(self.utils.check_duplicates(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}"),
                        optimize=True,
-                       lossless=self.config['IMAGE']['Lossless'],
+                       lossless=self.params.image_lossless,
                        quality=quality,
                        minimize_size=True)
             self.printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
         except Exception as e:
             self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
             self.utils.errors += 1
-            if not self.config['FFMPEG']['HideErrors']:
+            if not self.params.hide_errors:
                 self.printer.error(f"File {file} can't be processed! Error: {e}")
         return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
 
 
     def unknown(self, folder, file, target_folder):
-        if self.config["FFMPEG"]["ForceCompress"]:
+        if self.params.force_compress:
             self.printer.unknown_file(file)
             try:
                 (FFmpeg()
@@ -135,7 +135,7 @@ class Compress:
             except FFmpegError as e:
                 self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
                 self.utils.errors += 1
-                if not self.config['FFMPEG']['HideErrors']:
+                if not self.params.hide_errors:
                     self.printer.error(f"File {file} can't be processed! Error: {e}")
         else:
             self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
@@ -145,15 +145,15 @@ class Compress:
     def compress(self, _dir, filename, source, output):
         match File.get_type(filename):
             case "audio":
-                out_file = self.audio(_dir, filename, output, self.config['AUDIO']['Extension'])
+                out_file = self.audio(_dir, filename, output, self.params.audio_ext)
             case "image":
-                out_file = self.image(_dir, filename, output, self.config['IMAGE']['Extension'])
+                out_file = self.image(_dir, filename, output, self.params.image_ext)
             case "video":
-                out_file = self.video(_dir, filename, output, self.config['VIDEO']['Extension'])
+                out_file = self.video(_dir, filename, output, self.params.video_ext)
             case "unknown":
                 out_file = self.unknown(_dir, filename, output)
 
-        if self.config['FFMPEG']['MimicMode']:
+        if self.params.mimic_mode:
             try:
                 os.rename(out_file, f'{_dir}/{filename}'.replace(source, f"{source}_compressed"))
             except FileNotFoundError:

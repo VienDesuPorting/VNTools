@@ -7,9 +7,9 @@ import os
 
 class Application:
 
-    def __init__(self, config, compress, printer, utils):
-        self.config = config.config
-        self.args = config.args
+    def __init__(self, params, args, compress, printer, utils):
+        self.params = params
+        self.args = args
         self.compress = compress.compress
         self.printer = printer
         self.utils = utils
@@ -35,7 +35,7 @@ class Application:
             self.printer.info(f'Compressing "{folder.replace(source, os.path.split(source)[-1])}" folder...')
             output = folder.replace(source, f"{source}_compressed")
 
-            with ThreadPoolExecutor(max_workers=self.config["FFMPEG"]["Workers"]) as executor:
+            with ThreadPoolExecutor(max_workers=self.params.workers) as executor:
                 futures = [
                     executor.submit(self.compress, folder, file, source, output)
                     for file in files if os.path.isfile(f'{folder}/{file}')

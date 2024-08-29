@@ -4,9 +4,9 @@ import os
 
 class Utils:
 
-    def __init__(self, config, printer):
+    def __init__(self, params, printer):
         self.errors = 0
-        self.config = config
+        self.params = params
         self.printer = printer
 
     @staticmethod
@@ -56,7 +56,7 @@ class Utils:
             self.get_compression(orig_folder, f"{orig_folder}_compressed")
 
     def add_unprocessed_file(self, orig_folder, new_folder):
-        if self.config['FFMPEG']['CopyUnprocessed']:
+        if self.params.copy_unprocessed:
             filename = orig_folder.split("/").pop()
             copyfile(orig_folder, new_folder)
             self.printer.info(f"File {filename} copied to compressed folder.")
