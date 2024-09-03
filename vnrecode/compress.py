@@ -45,54 +45,56 @@ class Compress:
         self.printer = printer
         self.utils = utils
 
-    def audio(self, folder, file, target_folder, extension):
-        bitrate = self.params.audio_bitrate
+    def audio(self, in_dir, file, out_dir, extension):
+        bit_rate = self.params.audio_bitrate
+        out_file = self.utils.check_duplicates(f'{out_dir}/{os.path.splitext(file)[0]}.{extension}')
         try:
             (FFmpeg()
-             .input(f'{folder}/{file}')
+             .input(f'{in_dir}/{file}')
              .option("hide_banner")
-             .output(self.utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
-                     {"b:a": bitrate, "loglevel": "error"})
+             .output(out_file,{"b:a": bit_rate, "loglevel": "error"})
              .execute()
              )
         except FFmpegError as e:
-            self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+            self.utils.add_unprocessed_file(f'{in_dir}/{file}', f'{out_dir}/{file}')
             self.utils.errors += 1
             if not self.params.hide_errors:
                 self.printer.error(f"File {file} can't be processed! Error: {e}")
-        self.printer.files(file, os.path.splitext(file)[0], extension, f"{bitrate}")
-        return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
+        self.printer.files(file, os.path.splitext(file)[0], extension, f"{bit_rate}")
+        return out_file
 
 
-    def video(self, folder, file, target_folder, extension):
+    def video(self, in_dir, file, out_dir, extension):
         if not self.params.video_skip:
+            out_file = self.utils.check_duplicates(f'{out_dir}/{os.path.splitext(file)[0]}.{extension}')
             codec = self.params.video_codec
             crf = self.params.video_crf
 
             try:
                 (FFmpeg()
-                 .input(f'{folder}/{file}')
+                 .input(f'{in_dir}/{file}')
                  .option("hide_banner")
                  .option("hwaccel", "auto")
-                 .output(self.utils.check_duplicates(f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'),
-                         {"codec:v": codec, "v:b": 0, "loglevel": "error"}, crf=crf)
+                 .output(out_file,{"codec:v": codec, "v:b": 0, "loglevel": "error"}, crf=crf)
                  .execute()
                  )
                 self.printer.files(file, os.path.splitext(file)[0], extension, codec)
             except FFmpegError as e:
-                self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+                self.utils.add_unprocessed_file(f'{in_dir}/{file}', f'{out_dir}/{file}')
                 self.utils.errors += 1
                 if not self.params.hide_errors:
                     self.printer.error(f"File {file} can't be processed! Error: {e}")
+            return out_file
         else:
-            self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
-        return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
+            self.utils.add_unprocessed_file(f'{in_dir}/{file}', f'{out_dir}/{file}')
+            return f'{out_dir}/{os.path.splitext(file)[0]}.{extension}'
 
 
-    def image(self, folder, file, target_folder, extension):
+    def image(self, in_dir, file, out_dir, extension):
         quality = self.params.image_quality
+        out_file = self.utils.check_duplicates(f"{out_dir}/{os.path.splitext(file)[0]}.{extension}")
         try:
-            image = Image.open(f'{folder}/{file}')
+            image = Image.open(f'{in_dir}/{file}')
 
             if (extension == "jpg" or extension == "jpeg" or
                     (extension == "webp" and not self.params.webp_rgba)):
@@ -109,37 +111,39 @@ class Compress:
                 new_size = (int(width / res_downscale), int(height / res_downscale))
                 image = image.resize(new_size)
 
-            image.save(self.utils.check_duplicates(f"{target_folder}/{os.path.splitext(file)[0]}.{extension}"),
+            image.save(out_file,
                        optimize=True,
                        lossless=self.params.image_lossless,
                        quality=quality,
                        minimize_size=True)
             self.printer.files(file, os.path.splitext(file)[0], extension, f"{quality}%")
         except Exception as e:
-            self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+            self.utils.add_unprocessed_file(f'{in_dir}/{file}', f'{out_dir}/{file}')
             self.utils.errors += 1
             if not self.params.hide_errors:
                 self.printer.error(f"File {file} can't be processed! Error: {e}")
-        return f'{target_folder}/{os.path.splitext(file)[0]}.{extension}'
+        return out_file
 
 
-    def unknown(self, folder, file, target_folder):
+    def unknown(self, in_dir, filename, out_dir):
         if self.params.force_compress:
-            self.printer.unknown_file(file)
+            self.printer.unknown_file(filename)
+            out_file = self.utils.check_duplicates(f'{out_dir}/{filename}')
             try:
                 (FFmpeg()
-                 .input(f'{folder}/{file}')
-                 .output(self.utils.check_duplicates(f'{target_folder}/{file}'))
+                 .input(f'{in_dir}/{filename}')
+                 .output(out_file)
                  .execute()
                  )
             except FFmpegError as e:
-                self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
+                self.utils.add_unprocessed_file(f'{in_dir}/{filename}', f'{out_dir}/{filename}')
                 self.utils.errors += 1
                 if not self.params.hide_errors:
-                    self.printer.error(f"File {file} can't be processed! Error: {e}")
+                    self.printer.error(f"File {filename} can't be processed! Error: {e}")
+            return out_file
         else:
-            self.utils.add_unprocessed_file(f'{folder}/{file}', f'{target_folder}/{file}')
-        return f'{target_folder}/{file}'
+            self.utils.add_unprocessed_file(f'{in_dir}/{filename}', f'{out_dir}/{filename}')
+            return f'{out_dir}/{filename}'
 
 
     def compress(self, _dir, filename, source, output):
@@ -154,10 +158,7 @@ class Compress:
                 out_file = self.unknown(_dir, filename, output)
 
         if self.params.mimic_mode:
-            try:
-                os.rename(out_file, f'{_dir}/{filename}'.replace(source, f"{source}_compressed"))
-            except FileNotFoundError:
-                self.printer.warning(f"File {out_file} failed to copy to out dir")
+            os.rename(out_file, f'{_dir}/{filename}'.replace(source, f"{source}_compressed"))
 
         self.printer.bar.update()
         self.printer.bar.next()
