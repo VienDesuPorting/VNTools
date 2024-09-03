@@ -66,10 +66,10 @@ class Utils:
     def check_duplicates(self, in_dir, out_dir, filename):
         duplicates = glob(f"{in_dir}/{os.path.splitext(filename)[0]}.*")
         if len(duplicates) > 1:
-            if filename in self.duplicates:
+            if filename not in self.duplicates:
+                self.duplicates.append(filename)
                 new_name = os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]
                 return f"{out_dir}/{new_name}"
-            self.duplicates.append(filename)
         return f"{out_dir}/{filename}"
 
     def print_duplicates(self):
@@ -78,9 +78,11 @@ class Utils:
                 f'Duplicate file has been found! Check manually this files - "{filename}", '
                 f'"{os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]}"')
 
-    @staticmethod
-    def mimic_rename(filename, target, source):
+    def mimic_rename(self, filename, target, source):
         if filename.count("(vncopy)"):
+            orig_name = filename.replace("(vncopy)", "")
+            index = self.duplicates.index(os.path.split(orig_name)[-1])
+            self.duplicates[index] = os.path.split(target)[-1]
             target = os.path.splitext(target)[0] + "(vncopy)" + os.path.splitext(target)[1]
 
         os.rename(filename, target.replace(source, f"{source}_compressed"))
