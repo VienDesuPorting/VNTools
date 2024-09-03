@@ -4,17 +4,22 @@ from datetime import datetime
 import shutil
 import os
 
+from .compress import Compress
+from .printer import Printer
+from .params import Params
+from .utils import Utils
+
 
 class Application:
 
-    def __init__(self, params, compress, printer, utils):
+    def __init__(self, params: Params, compress: Compress, printer: Printer, utils: Utils):
         self.params = params
         self.compress = compress.compress
         self.printer = printer
         self.utils = utils
 
-    def compress_worker(self, folder, file, source, output):
-        if os.path.isfile(f'{folder}/{file}'):
+    def compress_worker(self, folder: str, file: str, source: str, output: str):
+        if os.path.isfile(os.path.join(folder, file)):
             self.compress(folder, file, source, output)
 
     def run(self):

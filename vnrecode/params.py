@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
 from typing import Self
 import tomllib
@@ -68,7 +68,7 @@ class Params:
         )
 
     @staticmethod
-    def get_args():
+    def get_args() -> Namespace:
         parser = ArgumentParser(prog="vnrecode",
                                 description="Python utility to compress Visual Novel Resources"
                                 )

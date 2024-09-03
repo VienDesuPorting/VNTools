@@ -15,7 +15,7 @@ class Printer:
 
     # Fill whole string with spaces for cleaning progress bar
     @staticmethod
-    def clean_str(string):
+    def clean_str(string: str) -> str:
         return string + " " * (os.get_terminal_size().columns - len(string))
 
     @staticmethod
@@ -23,20 +23,20 @@ class Printer:
         if sys.platform == "win32":
             colorama.init()
 
-    def bar_print(self, string):
+    def bar_print(self, string: str):
         print(string)
         self.bar.update()
 
-    def info(self, string):
+    def info(self, string: str):
         self.bar_print(self.clean_str(f"\r\033[100m- {string}\033[49m"))
 
-    def warning(self, string):
+    def warning(self, string: str):
         self.bar_print(self.clean_str(f"\r\033[93m!\033[0m {string}\033[49m"))
 
-    def error(self, string):
+    def error(self, string: str):
         self.bar_print(self.clean_str(f"\r\033[31m\u2715\033[0m {string}\033[49m"))
 
-    def files(self, source, dest, dest_ext, comment):
+    def files(self, source: str, dest: str, dest_ext: str, comment: str):
         source_ext = os.path.splitext(source)[1]
         source_name = os.path.splitext(source)[0]
 

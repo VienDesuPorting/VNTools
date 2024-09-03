@@ -17,15 +17,15 @@ class Utils:
             os.system("pause")
 
     @staticmethod
-    def get_size(directory):
+    def get_size(directory: str) -> int:
         total_size = 0
         for folder, folders, files in os.walk(directory):
             for file in files:
-                if not os.path.islink(f"{folder}/{file}"):
-                    total_size += os.path.getsize(f"{folder}/{file}")
+                if not os.path.islink(os.path.join(folder, file)):
+                    total_size += os.path.getsize(os.path.join(folder, file))
         return total_size
 
-    def get_compression(self, source, output):
+    def get_compression(self, source: str, output: str):
         try:
             source = self.get_size(source)
             output = self.get_size(output)
@@ -35,50 +35,50 @@ class Utils:
         except ZeroDivisionError:
             self.printer.warning("Nothing compressed!")
 
-    def get_compression_status(self, orig_folder):
-        orig_folder_len = 0
-        comp_folder_len = 0
+    def get_compression_status(self, source: str):
+        source_len = 0
+        output_len = 0
 
-        for folder, folders, files in os.walk(orig_folder):
-            orig_folder_len += len(files)
+        for folder, folders, files in os.walk(source):
+            source_len += len(files)
 
-        for folder, folders, files in os.walk(f'{orig_folder}_compressed'):
+        for folder, folders, files in os.walk(f'{source}_compressed'):
             for file in files:
                 if not os.path.splitext(file)[1].count("(copy)"):
-                    comp_folder_len += 1
+                    output_len += 1
 
         if self.errors != 0:
             self.printer.warning("Some files failed to compress!")
 
-        if orig_folder_len == comp_folder_len:
+        if source_len == output_len:
             self.printer.info("Success!")
-            self.get_compression(orig_folder, f"{orig_folder}_compressed")
         else:
             self.printer.warning("Original and compressed folders are not identical!")
-            self.get_compression(orig_folder, f"{orig_folder}_compressed")
+        self.get_compression(source, f"{source}_compressed")
 
-    def add_unprocessed_file(self, orig_folder, new_folder):
+    def add_unprocessed_file(self, source: str, output: str):
         if self.params.copy_unprocessed:
-            filename = orig_folder.split("/").pop()
-            copyfile(orig_folder, new_folder)
+            filename = os.path.split(source)[-1]
+            copyfile(source, output)
             self.printer.info(f"File {filename} copied to compressed folder.")
 
-    def check_duplicates(self, in_dir, out_dir, filename):
-        duplicates = glob(f"{in_dir}/{os.path.splitext(filename)[0]}.*")
+    def check_duplicates(self, source: str, output: str, filename: str) -> str:
+        duplicates = glob(os.path.join(source, os.path.splitext(filename)[0]+".*"))
         if len(duplicates) > 1:
             if filename not in self.duplicates:
                 self.duplicates.append(filename)
                 new_name = os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]
-                return f"{out_dir}/{new_name}"
-        return f"{out_dir}/{filename}"
+                return os.path.join(output, new_name)
+        return os.path.join(output, filename)
 
     def print_duplicates(self):
         for filename in self.duplicates:
             self.printer.warning(
                 f'Duplicate file has been found! Check manually this files - "{filename}", '
-                f'"{os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]}"')
+                f'"{os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]}"'
+            )
 
-    def mimic_rename(self, filename, target, source):
+    def mimic_rename(self, filename: str, target: str, source: str):
         if filename.count("(vncopy)"):
             orig_name = filename.replace("(vncopy)", "")
             index = self.duplicates.index(os.path.split(orig_name)[-1])
