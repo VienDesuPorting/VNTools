@@ -41,7 +41,7 @@ class Params:
                 print("Failed to find config. Check `vnrecode -h` to more info")
                 exit(255)
 
-        copy_unprocessed = config["FFMPEG"]["CopyUnprocessed"] if args.config else args.u
+        copy_unprocessed = config["FFMPEG"]["CopyUnprocessed"] if args.config else args.unproc
         force_compress = config["FFMPEG"]["ForceCompress"] if args.config else args.force
         mimic_mode = config["FFMPEG"]["MimicMode"] if args.config else args.mimic
         hide_errors = config["FFMPEG"]["HideErrors"] if args.config else args.show_errors
@@ -73,27 +73,23 @@ class Params:
                                 description="Python utility to compress Visual Novel Resources"
                                 )
         parser.add_argument("source", help="Directory with game files to recode")
-        parser.add_argument("-c", "--config", help="Utility config file")
-        parser.add_argument("-u", action='store_true', help="Copy unprocessed filed", default=True)
-        parser.add_argument("-nu", dest='u', action='store_false', help="Don't copy unprocessed")
+        parser.add_argument("-c", dest='config', help="Utility config file")
+        parser.add_argument("-nu", dest='unproc', action='store_false', help="Don't copy unprocessed")
         parser.add_argument("-f", "--force", action='store_true', help="Try to recode unknown files")
-        parser.add_argument("-m", "--mimic", action='store_true', help="Enable mimic mode", default=True)
         parser.add_argument("-nm", "--no-mimic", dest='mimic', action='store_false', help="Disable mimic mode")
         parser.add_argument("-v", "--show_errors", action='store_false', help="Show recode errors")
-        parser.add_argument("--webp_rgba", action='store_true', help="Recode .webp with alpha channel", default=True)
-        parser.add_argument("--webp_rgb", dest='webp_rgba', action='store_false', help="Recode .webp without alpha channel")
+        parser.add_argument("--webp-rgb", dest='webp_rgba', action='store_false', help="Recode .webp without alpha channel")
         parser.add_argument("-j", "--jobs", type=int, help="Number of threads", default=16)
-        parser.add_argument("-ae", "--a_ext", help="Audio extension", default="opus")
-        parser.add_argument("-ab", "--a_bit", help="Audio bit rate", default="128k")
-        parser.add_argument("-id", "--i_down", type=int, help="Image resolution downscale multiplier", default=1)
-        parser.add_argument("-ie", "--i_ext", help="Image extension", default="avif")
-        parser.add_argument("-ife", "--i_fallext", help="Image fallback extension", default="webp")
-        parser.add_argument("-il", "--i_lossless", action='store_true', help="Image lossless compression mode", default=True)
-        parser.add_argument("-ilo", "--i_losing", dest='ilossless', action='store_false', help="Image losing compression mode")
-        parser.add_argument("-iq", "--i_quality", type=int, help="Image quality", default=100)
+        parser.add_argument("-ae", dest="a_ext", help="Audio extension", default="opus")
+        parser.add_argument("-ab", dest="a_bit", help="Audio bit rate", default="128k")
+        parser.add_argument("-id", dest="i_down", type=int, help="Image resolution downscale multiplier", default=1)
+        parser.add_argument("-ie", dest="i_ext", help="Image extension", default="avif")
+        parser.add_argument("-ife", dest="i_fallext", help="Image fallback extension", default="webp")
+        parser.add_argument("-il", dest='i_lossless', action='store_false', help="Image losing compression mode")
+        parser.add_argument("-iq", dest="i_quality", type=int, help="Image quality", default=100)
         parser.add_argument("--v_crf", help="Video CRF number", type=int, default=27)
-        parser.add_argument("-vs", "--v_skip", action='store_true', help="Skip video recoding")
-        parser.add_argument("-ve", "--v_ext", help="Video extension", default="webm")
-        parser.add_argument("-vc", "--v_codec", help="Video codec name", default="libvpx-vp9")
+        parser.add_argument("-vs", dest="v_skip", action='store_true', help="Skip video recoding")
+        parser.add_argument("-ve", dest="v_ext", help="Video extension", default="webm")
+        parser.add_argument("-vc", dest="v_codec", help="Video codec name", default="libvpx-vp9")
         args = parser.parse_args()
         return args
