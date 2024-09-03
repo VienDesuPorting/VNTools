@@ -1,4 +1,5 @@
 from shutil import copyfile
+from glob import glob
 import sys
 import os
 
@@ -8,6 +9,7 @@ class Utils:
         self.errors = 0
         self.params = params
         self.printer = printer
+        self.duplicates = []
 
     @staticmethod
     def sys_pause():
@@ -61,11 +63,24 @@ class Utils:
             copyfile(orig_folder, new_folder)
             self.printer.info(f"File {filename} copied to compressed folder.")
 
-    def check_duplicates(self, new_folder):
-        filename = new_folder.split().pop()
-        if os.path.exists(new_folder):
+    def check_duplicates(self, in_dir, out_dir, filename):
+        duplicates = glob(f"{in_dir}/{os.path.splitext(filename)[0]}.*")
+        if len(duplicates) > 1:
+            if filename in self.duplicates:
+                new_name = os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]
+                return f"{out_dir}/{new_name}"
+            self.duplicates.append(filename)
+        return f"{out_dir}/{filename}"
+
+    def print_duplicates(self):
+        for filename in self.duplicates:
             self.printer.warning(
                 f'Duplicate file has been found! Check manually this files - "{filename}", '
-                f'"{os.path.splitext(filename)[0] + "(copy)" + os.path.splitext(filename)[1]}"')
-            return os.path.splitext(new_folder)[0] + "(copy)" + os.path.splitext(new_folder)[1]
-        return new_folder
+                f'"{os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]}"')
+
+    @staticmethod
+    def mimic_rename(filename, target, source):
+        if filename.count("(vncopy)"):
+            target = os.path.splitext(target)[0] + "(vncopy)" + os.path.splitext(target)[1]
+
+        os.rename(filename, target.replace(source, f"{source}_compressed"))

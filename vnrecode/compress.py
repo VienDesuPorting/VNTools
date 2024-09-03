@@ -46,7 +46,7 @@ class Compress:
 
     def audio(self, in_dir, file, out_dir, extension):
         bit_rate = self.params.audio_bitrate
-        out_file = self.utils.check_duplicates(f'{out_dir}/{os.path.splitext(file)[0]}.{extension}')
+        out_file = self.utils.check_duplicates(in_dir, out_dir, f'{os.path.splitext(file)[0]}.{extension}')
         try:
             (FFmpeg()
              .input(f'{in_dir}/{file}')
@@ -65,7 +65,7 @@ class Compress:
 
     def video(self, in_dir, file, out_dir, extension):
         if not self.params.video_skip:
-            out_file = self.utils.check_duplicates(f'{out_dir}/{os.path.splitext(file)[0]}.{extension}')
+            out_file = self.utils.check_duplicates(in_dir, out_dir, f'{os.path.splitext(file)[0]}.{extension}')
             codec = self.params.video_codec
             crf = self.params.video_crf
 
@@ -91,7 +91,7 @@ class Compress:
 
     def image(self, in_dir, file, out_dir, extension):
         quality = self.params.image_quality
-        out_file = self.utils.check_duplicates(f"{out_dir}/{os.path.splitext(file)[0]}.{extension}")
+        out_file = self.utils.check_duplicates(in_dir, out_dir, f"{os.path.splitext(file)[0]}.{extension}")
         try:
             image = Image.open(f'{in_dir}/{file}')
 
@@ -127,7 +127,7 @@ class Compress:
     def unknown(self, in_dir, filename, out_dir):
         if self.params.force_compress:
             self.printer.unknown_file(filename)
-            out_file = self.utils.check_duplicates(f'{out_dir}/{filename}')
+            out_file = self.utils.check_duplicates(in_dir, out_dir, filename)
             try:
                 (FFmpeg()
                  .input(f'{in_dir}/{filename}')
@@ -144,7 +144,6 @@ class Compress:
             self.utils.add_unprocessed_file(f'{in_dir}/{filename}', f'{out_dir}/{filename}')
             return f'{out_dir}/{filename}'
 
-
     def compress(self, _dir, filename, source, output):
         match File.get_type(filename):
             case "audio":
@@ -157,7 +156,7 @@ class Compress:
                 out_file = self.unknown(_dir, filename, output)
 
         if self.params.mimic_mode:
-            os.rename(out_file, f'{_dir}/{filename}'.replace(source, f"{source}_compressed"))
+            self.utils.mimic_rename(out_file, f'{_dir}/{filename}', source)
 
         self.printer.bar.update()
         self.printer.bar.next()

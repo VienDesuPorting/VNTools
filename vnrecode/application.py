@@ -42,6 +42,7 @@ class Application:
                 for future in as_completed(futures):
                     future.result()
 
+        self.utils.print_duplicates()
         self.utils.get_compression_status(source)
         self.utils.sys_pause()
         print(f"Time taken: {datetime.now() - start_time}")
