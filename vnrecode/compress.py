@@ -8,19 +8,18 @@ class File:
 
     @staticmethod
     def get_type(filename):
-        audio_ext = ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma']
-        image_ext = ['.apng', '.avif', '.bmp', '.tga', '.tiff', '.dds', '.svg', '.webp', '.jpg', '.jpeg', '.png']
-        video_ext = ['.3gp' '.amv', '.avi', '.m2t', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv',
-                     '.webm', '.ogv']
 
-        if os.path.splitext(filename)[1] in audio_ext:
-            return "audio"
-        elif os.path.splitext(filename)[1] in image_ext:
-            return "image"
-        elif os.path.splitext(filename)[1] in video_ext:
-            return "video"
-        else:
-            return "unknown"
+        extensions = {
+            "audio": ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma'],
+            "image": ['.apng', '.avif', '.bmp', '.tga', '.tiff', '.dds', '.svg', '.webp', '.jpg', '.jpeg', '.png'],
+            "video": ['.3gp' '.amv', '.avi', '.m2t', '.m4v', '.mkv', '.mov', '.mp4', '.m4v', '.mpeg', '.mpv',
+                      '.webm', '.ogv']
+        }
+
+        for file_type in extensions:
+            if os.path.splitext(filename)[1] in extensions[file_type]:
+                return file_type
+        return "unknown"
 
     @staticmethod
     def has_transparency(img: Image) -> bool:
