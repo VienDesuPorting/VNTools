@@ -9,7 +9,7 @@ packages = ["vnrecode", "unrenapk", "vnds2renpy"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-'vnrecode' = ['*.py', '*.toml']
+'vnrecode' = ['*.py']
 'vnds2renpy' = ['*.py']
 'unrenapk' = ['*.py']
 

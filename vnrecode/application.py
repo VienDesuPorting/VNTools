@@ -7,9 +7,8 @@ import os
 
 class Application:
 
-    def __init__(self, params, args, compress, printer, utils):
+    def __init__(self, params, compress, printer, utils):
         self.params = params
-        self.args = args
         self.compress = compress.compress
         self.printer = printer
         self.utils = utils
@@ -22,7 +21,7 @@ class Application:
         start_time = datetime.now()
         self.printer.win_ascii_esc()
 
-        source = os.path.abspath(self.args.source)
+        source = os.path.abspath(self.params.source)
 
         if os.path.exists(f"{source}_compressed"):
             shutil.rmtree(f"{source}_compressed")
