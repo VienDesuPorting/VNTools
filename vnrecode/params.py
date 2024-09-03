@@ -32,30 +32,7 @@ class Params:
 
     @classmethod
     def setup(cls) -> Self:
-        parser = ArgumentParser(prog="vnrecode",
-                                description="Python utility to compress Visual Novel Resources"
-                                )
-        parser.add_argument("source", help="SourceDir")
-        parser.add_argument("-c", "--config", help="ConfigFile")
-        parser.add_argument("-u", type=bool, help="CopyUnprocessed", default=True)
-        parser.add_argument("-f", "--force", type=bool, help="ForceCompress", default=False)
-        parser.add_argument("-m", "--mimic", type=bool, help="MimicMode", default=True)
-        parser.add_argument("-s", "--silent", type=bool, help="HideErrors", default=True)
-        parser.add_argument("--webprgba", type=bool, help="WebpRGBA", default=True)
-        parser.add_argument("-j", "--jobs", type=int, help="Workers", default=16)
-        parser.add_argument("-ae", "--aext", help="Audio Extension", default="opus")
-        parser.add_argument("-ab", "--abit", help="Audio Bitrate", default="128k")
-        parser.add_argument("-id", "--idown", type=int, help="Image Downscale", default=1)
-        parser.add_argument("-ie", "--iext", help="Image Extension", default="avif")
-        parser.add_argument("-ife", "--ifallext", help="Image Fallback Extension", default="webp")
-        parser.add_argument("-il", "--ilossless", type=bool, help="Image Lossless", default=True)
-        parser.add_argument("-iq", "--iquality", type=int, help="Image Quality", default=100)
-        parser.add_argument("--vcrf", help="Video CRF", type=int, default=27)
-        parser.add_argument("-vs", "--vskip", help="Video Skip", default=False)
-        parser.add_argument("-ve", "--vext", help="Video Extension", default="webm")
-        parser.add_argument("-vc", "--vcodec", help="Video Codec", default="libvpx-vp9")
-        args = parser.parse_args()
-
+        args = cls.get_args()
         if args.config is not None:
             if os.path.isfile(args.config):
                 with open(args.config, "rb") as cfile:
@@ -67,20 +44,20 @@ class Params:
         copy_unprocessed = config["FFMPEG"]["CopyUnprocessed"] if args.config else args.u
         force_compress = config["FFMPEG"]["ForceCompress"] if args.config else args.force
         mimic_mode = config["FFMPEG"]["MimicMode"] if args.config else args.mimic
-        hide_errors = config["FFMPEG"]["HideErrors"] if args.config else args.silent
+        hide_errors = config["FFMPEG"]["HideErrors"] if args.config else args.show_errors
         workers = config["FFMPEG"]["Workers"] if args.config else args.jobs
-        webp_rgba = config["FFMPEG"]["WebpRGBA"] if args.config else args.webprgba
-        audio_ext = config["AUDIO"]["Extension"] if args.config else args.aext
-        audio_bitrate = config["AUDIO"]["BitRate"] if args.config else args.abit
-        image_downscale = config["IMAGE"]["ResDownScale"] if args.config else args.idown
-        image_ext = config["IMAGE"]["Extension"] if args.config else args.iext
-        image_fall_ext = config["IMAGE"]["FallBackExtension"] if args.config else args.ifallext
-        image_lossless = config["IMAGE"]["Lossless"] if args.config else args.ilossless
-        image_quality = config["IMAGE"]["Quality"] if args.config else args.iquality
-        video_crf = config["VIDEO"]["CRF"] if args.config else args.vcrf
-        video_skip = config["VIDEO"]["SkipVideo"] if args.config else args.vskip
-        video_ext = config["VIDEO"]["Extension"] if args.config else args.vext
-        video_codec = config["VIDEO"]["Codec"] if args.config else args.vcodec
+        webp_rgba = config["FFMPEG"]["WebpRGBA"] if args.config else args.webp_rgba
+        audio_ext = config["AUDIO"]["Extension"] if args.config else args.a_ext
+        audio_bitrate = config["AUDIO"]["BitRate"] if args.config else args.a_bit
+        image_downscale = config["IMAGE"]["ResDownScale"] if args.config else args.i_down
+        image_ext = config["IMAGE"]["Extension"] if args.config else args.i_ext
+        image_fall_ext = config["IMAGE"]["FallBackExtension"] if args.config else args.i_fallext
+        image_lossless = config["IMAGE"]["Lossless"] if args.config else args.i_lossless
+        image_quality = config["IMAGE"]["Quality"] if args.config else args.i_quality
+        video_crf = config["VIDEO"]["CRF"] if args.config else args.v_crf
+        video_skip = config["VIDEO"]["SkipVideo"] if args.config else args.v_skip
+        video_ext = config["VIDEO"]["Extension"] if args.config else args.v_ext
+        video_codec = config["VIDEO"]["Codec"] if args.config else args.v_codec
         source = args.source
 
         return cls(
@@ -89,3 +66,34 @@ class Params:
             image_downscale, image_ext, image_fall_ext, image_lossless, image_quality,
             video_crf, video_skip, video_ext, video_codec, source
         )
+
+    @staticmethod
+    def get_args():
+        parser = ArgumentParser(prog="vnrecode",
+                                description="Python utility to compress Visual Novel Resources"
+                                )
+        parser.add_argument("source", help="Directory with game files to recode")
+        parser.add_argument("-c", "--config", help="Utility config file")
+        parser.add_argument("-u", action='store_true', help="Copy unprocessed filed", default=True)
+        parser.add_argument("-nu", dest='u', action='store_false', help="Don't copy unprocessed")
+        parser.add_argument("-f", "--force", action='store_true', help="Try to recode unknown files")
+        parser.add_argument("-m", "--mimic", action='store_true', help="Enable mimic mode", default=True)
+        parser.add_argument("-nm", "--no-mimic", dest='mimic', action='store_false', help="Disable mimic mode")
+        parser.add_argument("-v", "--show_errors", action='store_false', help="Show recode errors")
+        parser.add_argument("--webp_rgba", action='store_true', help="Recode .webp with alpha channel", default=True)
+        parser.add_argument("--webp_rgb", dest='webp_rgba', action='store_false', help="Recode .webp without alpha channel")
+        parser.add_argument("-j", "--jobs", type=int, help="Number of threads", default=16)
+        parser.add_argument("-ae", "--a_ext", help="Audio extension", default="opus")
+        parser.add_argument("-ab", "--a_bit", help="Audio bit rate", default="128k")
+        parser.add_argument("-id", "--i_down", type=int, help="Image resolution downscale multiplier", default=1)
+        parser.add_argument("-ie", "--i_ext", help="Image extension", default="avif")
+        parser.add_argument("-ife", "--i_fallext", help="Image fallback extension", default="webp")
+        parser.add_argument("-il", "--i_lossless", action='store_true', help="Image lossless compression mode", default=True)
+        parser.add_argument("-ilo", "--i_losing", dest='ilossless', action='store_false', help="Image losing compression mode")
+        parser.add_argument("-iq", "--i_quality", type=int, help="Image quality", default=100)
+        parser.add_argument("--v_crf", help="Video CRF number", type=int, default=27)
+        parser.add_argument("-vs", "--v_skip", action='store_true', help="Skip video recoding")
+        parser.add_argument("-ve", "--v_ext", help="Video extension", default="webm")
+        parser.add_argument("-vc", "--v_codec", help="Video codec name", default="libvpx-vp9")
+        args = parser.parse_args()
+        return args
