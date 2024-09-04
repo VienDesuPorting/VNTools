@@ -2,6 +2,7 @@ from shutil import copyfile
 from glob import glob
 import sys
 import os
+import re
 
 class Utils:
 
@@ -63,7 +64,10 @@ class Utils:
             self.printer.info(f"File {filename} copied to compressed folder.")
 
     def check_duplicates(self, source: str, output: str, filename: str) -> str:
-        duplicates = glob(os.path.join(source, os.path.splitext(filename)[0]+".*"))
+        files = glob(os.path.join(source, os.path.splitext(filename)[0])+".*")
+        re_pattern = re.compile(os.path.join(source, os.path.splitext(filename)[0])+r".[a-zA-Z0-9]+$")
+        duplicates = [f for f in files if re_pattern.match(f)]
+
         if len(duplicates) > 1:
             if filename not in self.duplicates:
                 self.duplicates.append(filename)
