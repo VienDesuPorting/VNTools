@@ -4,6 +4,9 @@ import sys
 import os
 import re
 
+import fnmatch
+
+
 class Utils:
 
     def __init__(self, params, printer):
@@ -64,12 +67,11 @@ class Utils:
             self.printer.info(f"File {filename} copied to compressed folder.")
 
     def check_duplicates(self, source: str, output: str, filename: str) -> str:
-        files = glob(os.path.join(source, os.path.splitext(filename)[0])+".*")
-        re_pattern = re.compile(os.path.join(source, os.path.splitext(filename)[0])+r".[a-zA-Z0-9]+$")
-        duplicates = [f for f in files if re_pattern.match(f)]
+        re_pattern = re.compile(os.path.splitext(filename)[0]+r".[a-zA-Z0-9]+$", re.IGNORECASE)
+        duplicates = [name for name in os.listdir(source) if re_pattern.match(name)]
 
         if len(duplicates) > 1:
-            if filename not in self.duplicates:
+            if filename.lower() not in (duplicate.lower() for duplicate in self.duplicates):
                 self.duplicates.append(filename)
                 new_name = os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]
                 return os.path.join(output, new_name)

@@ -42,7 +42,7 @@ class Application:
             with ThreadPoolExecutor(max_workers=self.params.workers) as executor:
                 futures = [
                     executor.submit(self.compress, folder, file, source, output)
-                    for file in files if os.path.isfile(f'{folder}/{file}')
+                    for file in files if os.path.isfile(os.path.join(folder, file))
                 ]
                 for future in as_completed(futures):
                     future.result()
