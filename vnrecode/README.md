@@ -1,13 +1,7 @@
-## FFMpeg-Compressor
-Python utility uses ffmpeg to compress Visual Novel Resources
+## vnrecode
+Python utility uses Pillow and ffmpeg to compress Visual Novel Resources
 
-### How to use
-* Download `ffmpeg-comp.toml` and put in next to binary or in to `/etc` folder
-* Change the configuration of the utility in `ffmpeg-comp.toml` for yourself
-* `ffmpeg-comp {folder}`
-* In result, you get `{folder-compressed}` near with original `{folder}`
-
-### Configuration
+### Configuration file
 #### FFMPEG section
 * CopyUnprocessed - Copy all files that failed to compress by ffmpeg to destination folder. In can help to recreate original folder, but with compressed files. (default: `true`)
 * ForceCompress - Force try to compress all files in directory via ffmpeg. (default: `false`)
@@ -32,9 +26,34 @@ Python utility uses ffmpeg to compress Visual Novel Resources
 * Extension - Required image file extension. It supports: `.3gp`, `.amv`, `.avi`, `.gif`, `.m2l`, `.m4v`, `.mkv`, `.mov`, `.mp4`, `.m4v`, `.mpeg`, `.mpv`, `.webm`, `.ogv`
 * Codec - (Maybe optional in future) Required video codec. (See official ffmpeg documentation for supported codecs) 
 
+### CLI Parameters
+##### positional arguments:
+*  source                - Directory with game files to recode
+
+##### options:
+* ` -h, --help `           - show this help message and exit
+* ` -c CONFIG `            - Utility config file
+* ` -nu `                  - Don't copy unprocessed
+* ` -f, --force `          - Try to recode unknown files
+* ` -nm, --no-mimic `      - Disable mimic mode
+* ` -v, --show_errors `    - Show recode errors
+* ` --webp-rgb `           - Recode .webp without alpha channel
+* ` -j JOBS, --jobs JOBS ` - Number of threads
+* ` -ae A_EXT `            - Audio extension
+* ` -ab A_BIT `            - Audio bit rate
+* ` -id I_DOWN `           - Image resolution downscale multiplier
+* ` -ie I_EXT `            - Image extension
+* ` -ife I_FALLEXT `       - Image fallback extension
+* ` -il `                  - Image losing compression mode
+* ` -iq I_QUALITY `        - Image quality
+* ` --v_crf V_CRF `        - Video CRF number
+* ` -vs `                  - Skip video recoding
+* ` -ve V_EXT `            - Video extension
+* ` -vc V_CODEC `          - Video codec name
+
 ### TODO (for testing branch)
 * [x] Recreate whole game directory with compressed files
 * [x] Cross-platform (Easy Windows usage and binaries, macOS binaries)
-* [x] Use ffmpeg python bindings instead of cli commands
+* [x] Use ffmpeg python bindings instead of os.system
 * [x] Multithread
 * [ ] Reorganize code

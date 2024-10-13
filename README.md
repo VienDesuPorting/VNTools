@@ -2,10 +2,10 @@
 Collection of tools used by VienDesu! Porting Team
 
 ### Tools
-* `FFMpeg-Compressor` - Python utility to compress Visual Novel Resources
-* `RenPy-Android-Unpack` - A Python script for extracting game project from Ren'Py based .apk and .obb files
-* `RenPy-Unpacker` - Simple .rpy script that will make any RenPy game unpack itself
-* `VNDS-to-RenPy` - Simple script for converting VNDS engine scripts to .rpy ones
+* `vnrecode` - Python utility to compress Visual Novel Resources
+* `unrenapk` - A Python script for extracting game project from Ren'Py based .apk and .obb files
+* `renpy-ripper` - Simple .rpy script that will make any RenPy game unpack itself
+* `vnds2renpy` - Simple script for converting VNDS engine scripts to .rpy ones
 
 ### Installation
 #### Download from releases:
