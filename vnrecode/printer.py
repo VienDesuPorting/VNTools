@@ -3,6 +3,7 @@ from pathlib import Path
 import colorama
 import sys
 import os
+import re
 
 class Printer:
     """
@@ -26,7 +27,8 @@ class Printer:
         :param string: String to "clean"
         :return: "Clean" string
         """
-        return string + " " * (os.get_terminal_size().columns - len(string))
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        return string + " " * (os.get_terminal_size().columns - len(ansi_escape.sub('', string)))
 
     @staticmethod
     def win_ascii_esc():
@@ -56,18 +58,18 @@ class Printer:
 
     def warning(self, string: str):
         """
-       Method prints string with decor for warning messages
-       :param string: String to print
-       :return: None
-       """
+        Method prints string with decor for warning messages
+        :param string: String to print
+        :return: None
+        """
         self.bar_print(self.clean_str(f"\r\033[93m!\033[0m {string}\033[49m"))
 
     def error(self, string: str):
         """
-       Method prints string with decor for error messages
-       :param string: String to print
-       :return: None
-       """
+        Method prints string with decor for error messages
+        :param string: String to print
+        :return: None
+        """
         self.bar_print(self.clean_str(f"\r\033[31m\u2715\033[0m {string}\033[49m"))
 
     def files(self, source_path: Path, output_path: Path, comment: str):
