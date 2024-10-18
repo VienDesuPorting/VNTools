@@ -17,7 +17,7 @@ class Utils:
         self.__errors = 0
         self.__params = params_inst
         self.__printer = printer_inst
-        self.__duplicates = []
+        self.__duplicates = {}
 
     @staticmethod
     def sys_pause():
@@ -102,9 +102,13 @@ class Utils:
         :return: Duplicate path name with (vncopy) on end
         """
         if path.is_file() and path.exists():
-            new_path = Path(path.stem + "(vncopy)" + path.suffix)
-            self.__duplicates.append(new_path)
-            return new_path
+            orig_name = path.name.replace("(vncopy)", "")
+            new_path = Path(path.parent, path.stem + "(vncopy)" + path.suffix)
+            try: self.__duplicates[orig_name]
+            except KeyError: self.__duplicates[orig_name] = []
+            if not new_path.name in self.__duplicates[orig_name]:
+                self.__duplicates[orig_name].append(new_path.name)
+            return self.catch_duplicates(new_path)
         return path
 
     def print_duplicates(self):
@@ -112,13 +116,13 @@ class Utils:
         Method prints message about all duplicates generated during recode process
         :return: None
         """
-        for filename in self.__duplicates:
+        for filename in self.__duplicates.keys():
             self.__printer.warning(
-                f'Duplicate file has been found! Check manually this files - "{filename.name}", '
-                f'"{filename.stem + "(vncopy)" + filename.suffix}"'
+                f'Duplicate file has been found! Check manually this files - "{filename}", ' +
+                ', '.join(self.__duplicates[filename])
             )
 
-    def out_rename(self, out_path: Path, target: str):
+    def out_rename(self, out_path: Path, target: Path):
         """
         Method removes md5 hash from file name and changes file extension in dependence of mimic mode
         :param out_path: Recoded file Path
@@ -126,7 +130,7 @@ class Utils:
         :return: None
         """
         if not self.__params.mimic_mode:
-            dest_name = self.catch_duplicates(Path(out_path.parent, target))
+            dest_name = self.catch_duplicates(Path(out_path.parent, target.stem+out_path.suffix))
             os.rename(out_path, dest_name)
         else:
-            os.rename(out_path, Path(out_path.parent, target))
+            os.rename(out_path, Path(out_path.parent, target.name))

@@ -192,6 +192,6 @@ class Compress:
             case "unknown":
                 out_file = self.unknown(source, output)
 
-        self.__utils.out_rename(out_file, source.name)
+        self.__utils.out_rename(out_file, source)
         self.__printer.bar.update()
         self.__printer.bar.next()
