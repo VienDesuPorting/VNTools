@@ -1,12 +1,12 @@
 from progress.bar import IncrementalBar
+from pathlib import Path
 import colorama
 import sys
 import os
 
-
 class Printer:
 
-    def __init__(self, folder):
+    def __init__(self, folder: Path):
         file_count = 0
         for folder, folders, file in os.walk(folder):
             file_count += len(file)
@@ -36,11 +36,9 @@ class Printer:
     def error(self, string: str):
         self.bar_print(self.clean_str(f"\r\033[31m\u2715\033[0m {string}\033[49m"))
 
-    def files(self, source: str, dest: str, dest_ext: str, comment: str):
-        source_ext = os.path.splitext(source)[1]
-        source_name = os.path.splitext(source)[0]
+    def files(self, source_path: Path, output_path: Path, comment: str):
+        self.bar_print(self.clean_str(f"\r\033[0;32m\u2713\033[0m \033[0;37m{source_path.stem}\033[0m{source_path.suffix}\033[0;37m -> "
+                                      f"{source_path.stem}\033[0m{output_path.suffix}\033[0;37m ({comment})\033[0m"))
 
-        self.bar_print(self.clean_str(f"\r\033[0;32m\u2713\033[0m \033[0;37m{source_name}\033[0m{source_ext}\033[0;37m -> {dest}\033[0m.{dest_ext}\033[0;37m ({comment})\033[0m"))
-
-    def unknown_file(self, file):
+    def unknown_file(self, file: str):
         self.bar_print(self.clean_str(f"\r* \033[0;33m{file}\033[0m (File will be force compressed via ffmpeg)"))

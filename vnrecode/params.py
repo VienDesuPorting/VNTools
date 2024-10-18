@@ -1,8 +1,8 @@
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Self
 import tomllib
-import os
 
 @dataclass
 class Params:
@@ -28,14 +28,14 @@ class Params:
     video_ext: str
     video_codec: str
 
-    source: str
-    dest: str
+    source: Path
+    dest: Path
 
     @classmethod
     def setup(cls) -> Self:
         args = cls.get_args()
         if args.config is not None:
-            if os.path.isfile(args.config):
+            if Path(args.config).is_file():
                 with open(args.config, "rb") as cfile:
                     config = tomllib.load(cfile)
             else:
@@ -59,8 +59,8 @@ class Params:
         video_skip = config["VIDEO"]["SkipVideo"] if args.config else args.v_skip
         video_ext = config["VIDEO"]["Extension"] if args.config else args.v_ext
         video_codec = config["VIDEO"]["Codec"] if args.config else args.v_codec
-        source = args.source
-        dest = f"{source}_compressed"
+        source = Path(args.source)
+        dest = Path(f"{args.source}_compressed")
 
         return cls(
             copy_unprocessed, force_compress, mimic_mode, hide_errors, webp_rgba, workers,

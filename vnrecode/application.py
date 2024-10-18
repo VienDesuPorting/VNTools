@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from pathlib import Path
 import shutil
 import os
 
@@ -12,11 +13,11 @@ from .utils import Utils
 
 class Application:
 
-    def __init__(self, params: Params, compress: Compress, printer: Printer, utils: Utils):
-        self.__params = params
-        self.__compress = compress.compress
-        self.__printer = printer
-        self.__utils = utils
+    def __init__(self, params_inst: Params, compress_inst: Compress, printer_inst: Printer, utils_inst: Utils):
+        self.__params = params_inst
+        self.__compress = compress_inst.compress
+        self.__printer = printer_inst
+        self.__utils = utils_inst
 
     def run(self):
         start_time = datetime.now()
@@ -24,21 +25,21 @@ class Application:
 
         source = self.__params.source
 
-        if os.path.exists(self.__params.dest):
+        if self.__params.dest.exists():
             shutil.rmtree(self.__params.dest)
 
         self.__printer.info("Creating folders...")
         for folder, folders, files in os.walk(source):
-            if not os.path.exists(folder.replace(source, self.__params.dest)):
-                os.mkdir(folder.replace(source, self.__params.dest))
+            output = Path(folder.replace(str(source), str(self.__params.dest)))
+            if not output.exists():
+                os.mkdir(output)
 
-            self.__printer.info(f'Compressing "{folder.replace(source, os.path.split(source)[-1])}" folder...')
-            output = folder.replace(source, self.__params.dest)
+            self.__printer.info(f'Compressing "{output}" folder...')
 
             with ThreadPoolExecutor(max_workers=self.__params.workers) as executor:
                 futures = [
-                    executor.submit(self.__compress, folder, file, output)
-                    for file in files if os.path.isfile(os.path.join(folder, file))
+                    executor.submit(self.__compress, Path(folder, file), Path(output))
+                    for file in files if Path(folder, file).is_file()
                 ]
                 for future in as_completed(futures):
                     future.result()
