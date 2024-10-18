@@ -13,41 +13,37 @@ from .utils import Utils
 class Application:
 
     def __init__(self, params: Params, compress: Compress, printer: Printer, utils: Utils):
-        self.params = params
-        self.compress = compress.compress
-        self.printer = printer
-        self.utils = utils
-
-    def compress_worker(self, folder: str, file: str, source: str, output: str):
-        if os.path.isfile(os.path.join(folder, file)):
-            self.compress(folder, file, source, output)
+        self.__params = params
+        self.__compress = compress.compress
+        self.__printer = printer
+        self.__utils = utils
 
     def run(self):
         start_time = datetime.now()
-        self.printer.win_ascii_esc()
+        self.__printer.win_ascii_esc()
 
-        source = os.path.abspath(self.params.source)
+        source = self.__params.source
 
-        if os.path.exists(f"{source}_compressed"):
-            shutil.rmtree(f"{source}_compressed")
+        if os.path.exists(self.__params.dest):
+            shutil.rmtree(self.__params.dest)
 
-        self.printer.info("Creating folders...")
+        self.__printer.info("Creating folders...")
         for folder, folders, files in os.walk(source):
-            if not os.path.exists(folder.replace(source, f"{source}_compressed")):
-                os.mkdir(folder.replace(source, f"{source}_compressed"))
+            if not os.path.exists(folder.replace(source, self.__params.dest)):
+                os.mkdir(folder.replace(source, self.__params.dest))
 
-            self.printer.info(f'Compressing "{folder.replace(source, os.path.split(source)[-1])}" folder...')
-            output = folder.replace(source, f"{source}_compressed")
+            self.__printer.info(f'Compressing "{folder.replace(source, os.path.split(source)[-1])}" folder...')
+            output = folder.replace(source, self.__params.dest)
 
-            with ThreadPoolExecutor(max_workers=self.params.workers) as executor:
+            with ThreadPoolExecutor(max_workers=self.__params.workers) as executor:
                 futures = [
-                    executor.submit(self.compress, folder, file, source, output)
+                    executor.submit(self.__compress, folder, file, output)
                     for file in files if os.path.isfile(os.path.join(folder, file))
                 ]
                 for future in as_completed(futures):
                     future.result()
 
-        self.utils.print_duplicates()
-        self.utils.get_compression_status(source)
-        self.utils.sys_pause()
+        self.__utils.print_duplicates()
+        self.__utils.get_compression_status()
+        self.__utils.sys_pause()
         print(f"Time taken: {datetime.now() - start_time}")

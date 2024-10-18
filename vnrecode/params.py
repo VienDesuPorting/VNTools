@@ -29,6 +29,7 @@ class Params:
     video_codec: str
 
     source: str
+    dest: str
 
     @classmethod
     def setup(cls) -> Self:
@@ -59,12 +60,13 @@ class Params:
         video_ext = config["VIDEO"]["Extension"] if args.config else args.v_ext
         video_codec = config["VIDEO"]["Codec"] if args.config else args.v_codec
         source = args.source
+        dest = f"{source}_compressed"
 
         return cls(
             copy_unprocessed, force_compress, mimic_mode, hide_errors, webp_rgba, workers,
             audio_ext, audio_bitrate,
             image_downscale, image_ext, image_fall_ext, image_lossless, image_quality,
-            video_crf, video_skip, video_ext, video_codec, source
+            video_crf, video_skip, video_ext, video_codec, source, dest
         )
 
     @staticmethod
