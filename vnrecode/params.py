@@ -7,6 +7,10 @@ import tomllib
 @dataclass
 class Params:
 
+    """
+    This dataclass contains all parameters for utility
+    """
+
     copy_unprocessed: bool
     force_compress: bool
     mimic_mode: bool
@@ -33,6 +37,10 @@ class Params:
 
     @classmethod
     def setup(cls) -> Self:
+        """
+        Method initialize all parameters and returns class instance
+        :return: Params instance
+        """
         args = cls.get_args()
         if args.config is not None:
             if Path(args.config).is_file():
@@ -71,6 +79,10 @@ class Params:
 
     @staticmethod
     def get_args() -> Namespace:
+        """
+        Method gets CLI arguments and returns argparse.Namespace instance
+        :return: argparse.Namespace of CLI args
+        """
         parser = ArgumentParser(prog="vnrecode",
                                 description="Python utility to compress Visual Novel Resources"
                                 )

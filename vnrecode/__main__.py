@@ -7,6 +7,10 @@ from .utils import Utils
 
 
 def init():
+    """
+    This function creates all needed class instances and run utility
+    :return: None
+    """
     params = Params.setup()
     printer = Printer(params.source)
     utils = Utils(params, printer)

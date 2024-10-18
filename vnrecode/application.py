@@ -12,6 +12,9 @@ from .utils import Utils
 
 
 class Application:
+    """
+    Main class for utility
+    """
 
     def __init__(self, params_inst: Params, compress_inst: Compress, printer_inst: Printer, utils_inst: Utils):
         self.__params = params_inst
@@ -20,6 +23,12 @@ class Application:
         self.__utils = utils_inst
 
     def run(self):
+        """
+        Method creates a folder in which all the recoded files will be placed,
+        creates a queue of recoding processes for each file and, when the files are run out in the original folder,
+        calls functions to display the result
+        :return: None
+        """
         start_time = datetime.now()
         self.__printer.win_ascii_esc()
 
@@ -45,6 +54,6 @@ class Application:
                     future.result()
 
         self.__utils.print_duplicates()
-        self.__utils.get_compression_status()
+        self.__utils.get_recode_status()
         self.__utils.sys_pause()
         print(f"Time taken: {datetime.now() - start_time}")

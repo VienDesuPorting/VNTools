@@ -9,10 +9,17 @@ from .utils import Utils
 
 
 class File:
+    """
+    Class contains some methods to work with files
+    """
 
     @staticmethod
-    def get_type(filename: Path) -> str:
-
+    def get_type(path: Path) -> str:
+        """
+        Method returns filetype string for file
+        :param path: Path of file to determine type
+        :return: filetype string: audio, image, video, unknown
+        """
         extensions = {
             "audio": ['.aac', '.flac', '.m4a', '.mp3', '.ogg', '.opus', '.raw', '.wav', '.wma'],
             "image": ['.apng', '.avif', '.bmp', '.tga', '.tiff', '.dds', '.svg', '.webp', '.jpg', '.jpeg', '.png'],
@@ -21,12 +28,17 @@ class File:
         }
 
         for file_type in extensions:
-            if filename.suffix in extensions[file_type]:
+            if path.suffix in extensions[file_type]:
                 return file_type
         return "unknown"
 
     @staticmethod
     def has_transparency(img: Image) -> bool:
+        """
+        Method checks if image has transparency
+        :param img: Pillow Image
+        :return: bool
+        """
         if img.info.get("transparency", None) is not None:
             return True
         if img.mode == "P":
@@ -49,6 +61,13 @@ class Compress:
         self.__utils = utils_inst
 
     def audio(self, input_path: Path, output_dir: Path, extension: str) -> Path:
+        """
+        Method recodes audio files to another format using ffmpeg utility
+        :param input_path: Path of the original audio file
+        :param output_dir: Path of the output (compression) folder
+        :param extension: Extension of the new audio file
+        :return: Path of compressed audio file with md5 hash as prefix
+        """
         bit_rate = self.__params.audio_bitrate
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f'{prefix}_{input_path.stem}.{extension}')
@@ -65,6 +84,13 @@ class Compress:
         return out_file
 
     def image(self, input_path: Path, output_dir: Path, extension: str) -> Path:
+        """
+        Method recodes image files to another format using Pillow
+        :param input_path: Path of the original image file
+        :param output_dir: Path of the output (compression) folder
+        :param extension: Extension of the new image file
+        :return: Path of compressed image file with md5 hash as prefix
+        """
         quality = self.__params.image_quality
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f"{prefix}_{input_path.stem}.{extension}")
@@ -97,6 +123,13 @@ class Compress:
         return out_file
 
     def video(self, input_path: Path, output_dir: Path, extension: str) -> Path:
+        """
+        Method recodes video files to another format using ffmpeg utility
+        :param input_path: Path of the original video file
+        :param output_dir: Path of the output (compression) folder
+        :param extension: Extension of the new video file
+        :return: Path of compressed video file with md5 hash as prefix
+        """
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f'{prefix}_{input_path.stem}.{extension}')
         if not self.__params.video_skip:
@@ -119,6 +152,13 @@ class Compress:
         return out_file
 
     def unknown(self, input_path: Path, output_dir: Path) -> Path:
+        """
+        Method recodes files with "unknown" file format using ffmpeg,
+        in the hope that ffmpeg supports this file type and the default settings for it will reduce its size
+        :param input_path: Path of the original file
+        :param output_dir: Path of the output (compression) folder
+        :return: Path of compressed file with md5 hash as prefix
+        """
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f"{prefix}_{input_path.name}")
         if self.__params.force_compress:
@@ -136,6 +176,12 @@ class Compress:
         return out_file
 
     def compress(self, source: Path, output: Path):
+        """
+        It the core method for this program. Method determines file type and call compress function for it
+        :param source: Path of file to compress
+        :param output: Path of output file
+        :return: None
+        """
         match File.get_type(source):
             case "audio":
                 out_file = self.audio(source, output, self.__params.audio_ext)

@@ -9,6 +9,9 @@ from vnrecode.params import Params
 
 
 class Utils:
+    """
+    Class contains various methods for internal utility use
+    """
 
     def __init__(self, params_inst: Params, printer_inst: Printer):
         self.__errors = 0
@@ -18,24 +21,27 @@ class Utils:
 
     @staticmethod
     def sys_pause():
+        """
+        Method calls pause for Windows cmd shell
+        :return: None
+        """
         if sys.platform == "win32":
             os.system("pause")
 
     @staticmethod
-    def get_size(directory: Path) -> int:
-        total_size = 0
-        for folder, folders, files in os.walk(directory):
-            for file in files:
-                path = Path(folder, file)
-                if not path.is_symlink():
-                    total_size += path.stat().st_size
-        return total_size
-
-    @staticmethod
     def get_hash(filename: str) -> str:
+        """
+        Method returns 8 chars of md5 hash for filename
+        :param filename: File name to get md5
+        :return: 8 chars of md5 hash
+        """
         return hashlib.md5(filename.encode()).hexdigest()[:8]
 
-    def get_compression_status(self):
+    def get_recode_status(self):
+        """
+        Method prints recoding results
+        :return: None
+        """
         source_len = 0
         output_len = 0
 
@@ -55,8 +61,8 @@ class Utils:
         else:
             self.__printer.warning("Original and compressed folders are not identical!")
         try:
-            source = self.get_size(self.__params.source)
-            output = self.get_size(self.__params.dest)
+            source = sum(file.stat().st_size for file in self.__params.source.glob('**/*') if file.is_file())
+            output = sum(file.stat().st_size for file in self.__params.dest.glob('**/*') if file.is_file())
 
             print(f"\nResult: {source/1024/1024:.2f}MB -> "
                   f"{output/1024/1024:.2f}MB ({(output - source)/1024/1024:.2f}MB)")
@@ -64,24 +70,48 @@ class Utils:
             self.__printer.warning("Nothing compressed!")
 
     def catch_unprocessed(self, input_path: Path, output_path: Path, error):
+        """
+        Method processes files that have not been recoded due to an error and prints error to console
+        if hide_errors parameter is False
+        :param input_path: Path of unprocessed file
+        :param output_path: Destination path of unprocessed file
+        :param error: Recoding exception
+        :return: None
+        """
         self.copy_unprocessed(input_path, output_path)
         self.__errors += 1
         if not self.__params.hide_errors:
             self.__printer.error(f"File {input_path.name} can't be processed! Error: {error}")
 
     def copy_unprocessed(self, input_path: Path, output_path: Path):
+        """
+        Method copies an unprocessed file from the source folder to the destination folder
+        :param input_path: Path of unprocessed file
+        :param output_path: Destination path of unprocessed file
+        :return: None
+        """
         if self.__params.copy_unprocessed:
             copyfile(input_path, output_path)
             self.__printer.info(f"File {input_path.name} copied to compressed folder.")
 
     def catch_duplicates(self, path: Path) -> Path:
-        if path.exists():
+        """
+        Method checks if file path exists and returns folder/filename(vncopy).ext path
+        if duplicate founded
+        :param path: Some file Path
+        :return: Duplicate path name with (vncopy) on end
+        """
+        if path.is_file() and path.exists():
             new_path = Path(path.stem + "(vncopy)" + path.suffix)
             self.__duplicates.append(new_path)
             return new_path
         return path
 
     def print_duplicates(self):
+        """
+        Method prints message about all duplicates generated during recode process
+        :return: None
+        """
         for filename in self.__duplicates:
             self.__printer.warning(
                 f'Duplicate file has been found! Check manually this files - "{filename.name}", '
@@ -89,6 +119,12 @@ class Utils:
             )
 
     def out_rename(self, out_path: Path, target: str):
+        """
+        Method removes md5 hash from file name and changes file extension in dependence of mimic mode
+        :param out_path: Recoded file Path
+        :param target: Target filename
+        :return: None
+        """
         if not self.__params.mimic_mode:
             dest_name = self.catch_duplicates(Path(out_path.parent, target))
             os.rename(out_path, dest_name)
