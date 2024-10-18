@@ -43,7 +43,7 @@ class Application:
             if not output.exists():
                 os.mkdir(output)
 
-            self.__printer.info(f'Compressing "{output}" folder...')
+            self.__printer.info(f'Compressing "{folder}" folder...')
 
             with ThreadPoolExecutor(max_workers=self.__params.workers) as executor:
                 futures = [
