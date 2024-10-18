@@ -1,7 +1,7 @@
 from shutil import copyfile
+import hashlib
 import sys
 import os
-import re
 
 
 class Utils:
@@ -25,6 +25,10 @@ class Utils:
                 if not os.path.islink(os.path.join(folder, file)):
                     total_size += os.path.getsize(os.path.join(folder, file))
         return total_size
+
+    @staticmethod
+    def get_hash(filename: str) -> str:
+        return hashlib.md5(filename.encode()).hexdigest()[:8]
 
     def get_compression_status(self):
         source_len = 0
@@ -54,22 +58,23 @@ class Utils:
         except ZeroDivisionError:
             self.__printer.warning("Nothing compressed!")
 
-    def add_unprocessed_file(self, source: str, output: str):
+    def catch_unprocessed(self, source, output, error):
+        self.copy_unprocessed(source, error)
+        self.__errors += 1
+        if not self.__params.hide_errors:
+            self.__printer.error(f"File {os.path.split(source)[-1]} can't be processed! Error: {error}")
+
+    def copy_unprocessed(self, source, output):
         if self.__params.copy_unprocessed:
-            filename = os.path.split(source)[-1]
             copyfile(source, output)
-            self.__printer.info(f"File {filename} copied to compressed folder.")
+            self.__printer.info(f"File {os.path.split(source)[-1]} copied to compressed folder.")
 
-    def check_duplicates(self, source: str, output: str, filename: str) -> str:
-        re_pattern = re.compile(os.path.splitext(filename)[0]+r".[a-zA-Z0-9]+$", re.IGNORECASE)
-        duplicates = [name for name in os.listdir(source) if re_pattern.match(name)]
-
-        if len(duplicates) > 1:
-            if filename.lower() not in (duplicate.lower() for duplicate in self.__duplicates):
-                self.__duplicates.append(filename)
-                new_name = os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]
-                return os.path.join(output, new_name)
-        return os.path.join(output, filename)
+    def catch_duplicates(self, path: str) -> str:
+        if os.path.exists(path):
+            new_path = os.path.splitext(path)[0] + "(vncopy)" + os.path.splitext(path)[1]
+            self.__duplicates.append(new_path)
+            return new_path
+        return path
 
     def print_duplicates(self):
         for filename in self.__duplicates:
@@ -78,11 +83,9 @@ class Utils:
                 f'"{os.path.splitext(filename)[0] + "(vncopy)" + os.path.splitext(filename)[1]}"'
             )
 
-    def mimic_rename(self, filename: str, target: str):
-        if filename.count("(vncopy)"):
-            orig_name = filename.replace("(vncopy)", "")
-            index = self.__duplicates.index(os.path.split(orig_name)[-1])
-            self.__duplicates[index] = os.path.split(target)[-1]
-            target = os.path.splitext(target)[0] + "(vncopy)" + os.path.splitext(target)[1]
-
-        os.rename(filename, target.replace(self.__params.source, self.__params.dest))
+    def out_rename(self, filename: str, target: str):
+        if not self.__params.mimic_mode:
+            dest_name = self.catch_duplicates(os.path.join(os.path.dirname(filename), target))
+            os.rename(filename, dest_name)
+        else:
+            os.rename(filename, os.path.join(os.path.dirname(filename), target))
