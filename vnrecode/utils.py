@@ -37,6 +37,14 @@ class Utils:
         """
         return hashlib.md5(filename.encode()).hexdigest()[:8]
 
+    def get_comp_subdir(self, folder: str) -> Path:
+        """
+        Method returns the Path from str, changing the source folder in it to a compressed one
+        :param folder: source subfolder
+        :return: Path object with compressed subfolder
+        """
+        return Path(folder.replace(str(self.__params.source), str(self.__params.dest), 1))
+
     def get_recode_status(self):
         """
         Method prints recoding results

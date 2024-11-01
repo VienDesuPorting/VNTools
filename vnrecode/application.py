@@ -39,7 +39,7 @@ class Application:
 
         self.__printer.info("Creating folders...")
         for folder, folders, files in os.walk(source):
-            output = Path(folder.replace(str(source), str(self.__params.dest)))
+            output = self.__utils.get_comp_subdir(folder)
             if not output.exists():
                 os.mkdir(output)
 
