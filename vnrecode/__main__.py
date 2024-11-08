@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-from .application import Application
-from .compress import Compress
-from .printer import Printer
-from .params import Params
-from .utils import Utils
+from vnrecode.application import Application
+from vnrecode.compress import Compress
+from vnrecode.printer import Printer
+from vnrecode.params import Params
+from vnrecode.utils import Utils
 
 
 def init():

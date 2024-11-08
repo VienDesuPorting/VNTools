@@ -4,8 +4,8 @@ import argparse
 import sys
 import os
 
-from .printer import Printer
-from .actions import Actions
+from unrenapk.printer import Printer
+from unrenapk.actions import Actions
 
 
 def args_init():

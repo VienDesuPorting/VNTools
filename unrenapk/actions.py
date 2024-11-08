@@ -3,7 +3,7 @@ from PIL import Image
 import shutil
 import os
 
-from .printer import Printer
+from unrenapk.printer import Printer
 
 
 class Extract:

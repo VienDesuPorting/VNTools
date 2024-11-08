@@ -5,10 +5,10 @@ from pathlib import Path
 import shutil
 import os
 
-from .compress import Compress
-from .printer import Printer
-from .params import Params
-from .utils import Utils
+from vnrecode.compress import Compress
+from vnrecode.printer import Printer
+from vnrecode.params import Params
+from vnrecode.utils import Utils
 
 
 class Application:

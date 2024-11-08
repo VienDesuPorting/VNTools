@@ -3,9 +3,9 @@ from pathlib import Path
 from PIL import Image
 import pillow_avif
 
-from .printer import Printer
-from .params import Params
-from .utils import Utils
+from vnrecode.printer import Printer
+from vnrecode.params import Params
+from vnrecode.utils import Utils
 
 
 class File:
