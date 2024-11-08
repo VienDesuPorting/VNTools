@@ -3,7 +3,6 @@ from pathlib import Path
 import colorama
 import sys
 import os
-import re
 
 class Printer:
     """
@@ -19,16 +18,6 @@ class Printer:
             file_count += len(file)
         self.bar = IncrementalBar('Compressing', max=file_count, suffix='[%(index)d/%(max)d] (%(percent).1f%%)')
         self.bar.update()
-
-    @staticmethod
-    def clean_str(string: str) -> str:
-        """
-        Method fills end of string with spaces to remove progress bar garbage from console
-        :param string: String to "clean"
-        :return: "Clean" string
-        """
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        return string + " " * (os.get_terminal_size().columns - len(ansi_escape.sub('', string)))
 
     @staticmethod
     def win_ascii_esc():
@@ -54,7 +43,7 @@ class Printer:
         :param string: String to print
         :return: None
         """
-        self.bar_print(self.clean_str(f"\r\033[100m- {string}\033[49m"))
+        self.bar_print(f"\x1b[2K\r\033[100m- {string}\033[49m")
 
     def warning(self, string: str):
         """
@@ -62,7 +51,7 @@ class Printer:
         :param string: String to print
         :return: None
         """
-        self.bar_print(self.clean_str(f"\r\033[93m!\033[0m {string}\033[49m"))
+        self.bar_print(f"\x1b[2K\r\033[93m!\033[0m {string}\033[49m")
 
     def error(self, string: str):
         """
@@ -70,7 +59,7 @@ class Printer:
         :param string: String to print
         :return: None
         """
-        self.bar_print(self.clean_str(f"\r\033[31m\u2715\033[0m {string}\033[49m"))
+        self.bar_print(f"\x1b[2K\r\033[31m\u2715\033[0m {string}\033[49m")
 
     def files(self, source_path: Path, output_path: Path, comment: str):
         """
@@ -81,8 +70,8 @@ class Printer:
         :param comment: Comment about recode quality setting
         :return: None
         """
-        self.bar_print(self.clean_str(f"\r\033[0;32m\u2713\033[0m \033[0;37m{source_path.stem}\033[0m{source_path.suffix}\033[0;37m -> "
-                                      f"{source_path.stem}\033[0m{output_path.suffix}\033[0;37m ({comment})\033[0m"))
+        self.bar_print(f"\x1b[2K\r\033[0;32m\u2713\033[0m \033[0;37m{source_path.stem}\033[0m{source_path.suffix}\033[0;37m -> "
+                                      f"{source_path.stem}\033[0m{output_path.suffix}\033[0;37m ({comment})\033[0m")
 
     def unknown_file(self, filename: str):
         """
@@ -90,4 +79,4 @@ class Printer:
         :param filename: Name of unknown file
         :return:
         """
-        self.bar_print(self.clean_str(f"\r\u2713 \033[0;33m{filename}\033[0m (File will be force compressed via ffmpeg)"))
+        self.bar_print(f"\x1b[2K\r\u2713 \033[0;33m{filename}\033[0m (File will be force compressed via ffmpeg)")
