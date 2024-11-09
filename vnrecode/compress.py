@@ -57,7 +57,6 @@ class Compress:
 
     def __init__(self, params_inst: Params, printer_inst: Printer, utils_inst: Utils):
         self.__params = params_inst
-        self.__printer = printer_inst
         self.__utils = utils_inst
 
     def audio(self, input_path: Path, output_dir: Path, extension: str) -> Path:
@@ -80,7 +79,6 @@ class Compress:
              )
         except FFmpegError as e:
             self.__utils.catch_unprocessed(input_path, out_file, e)
-        self.__printer.files(input_path, out_file, f"{bit_rate}")
         return out_file
 
     def image(self, input_path: Path, output_dir: Path, extension: str) -> Path:
@@ -100,7 +98,6 @@ class Compress:
             if (extension == "jpg" or extension == "jpeg" or
                     (extension == "webp" and not self.__params.webp_rgba)):
                 if File.has_transparency(image):
-                    self.__printer.warning(f"{input_path.name} has transparency. Changing to fallback...")
                     out_file = Path(output_dir, f"{prefix}_{input_path.stem}.{self.__params.image_fall_ext}")
 
             if File.has_transparency(image):
@@ -117,7 +114,6 @@ class Compress:
                        lossless=self.__params.image_lossless,
                        quality=quality,
                        minimize_size=True)
-            self.__printer.files(input_path, out_file, f"{quality}%")
         except Exception as e:
             self.__utils.catch_unprocessed(input_path, out_file, e)
         return out_file
@@ -144,7 +140,6 @@ class Compress:
                  .output(out_file,{"codec:v": codec, "v:b": 0, "loglevel": "error"}, crf=crf)
                  .execute()
                  )
-                self.__printer.files(input_path, out_file, codec)
             except FFmpegError as e:
                 self.__utils.catch_unprocessed(input_path, out_file, e)
         else:
@@ -162,7 +157,6 @@ class Compress:
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f"{prefix}_{input_path.name}")
         if self.__params.force_compress:
-            self.__printer.unknown_file(input_path.name)
             try:
                 (FFmpeg()
                  .input(input_path)
@@ -193,5 +187,5 @@ class Compress:
                 out_file = self.unknown(source, output)
 
         self.__utils.out_rename(out_file, source)
-        self.__printer.bar.update()
-        self.__printer.bar.next()
+        #self.__printer.bar.update()
+        #self.__printer.bar.next()

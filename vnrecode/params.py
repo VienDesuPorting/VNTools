@@ -93,7 +93,7 @@ class Params:
         parser.add_argument("-nm", "--no-mimic", dest='mimic', action='store_false', help="Disable mimic mode")
         parser.add_argument("-v", "--show_errors", action='store_false', help="Show recode errors")
         parser.add_argument("--webp-rgb", dest='webp_rgba', action='store_false', help="Recode .webp without alpha channel")
-        parser.add_argument("-j", "--jobs", type=int, help="Number of threads", default=16)
+        parser.add_argument("-j", "--jobs", type=int, help="Number of threads", default=8)
         parser.add_argument("-ae", dest="a_ext", help="Audio extension", default="opus")
         parser.add_argument("-ab", dest="a_bit", help="Audio bit rate", default="128k")
         parser.add_argument("-id", dest="i_down", type=int, help="Image resolution downscale multiplier", default=1)

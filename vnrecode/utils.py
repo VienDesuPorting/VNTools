@@ -68,13 +68,14 @@ class Utils:
             self.__printer.info("Success!")
         else:
             self.__printer.warning("Original and compressed folders are not identical!")
-        try:
-            source = sum(file.stat().st_size for file in self.__params.source.glob('**/*') if file.is_file())
-            output = sum(file.stat().st_size for file in self.__params.dest.glob('**/*') if file.is_file())
 
-            print(f"\nResult: {source/1024/1024:.2f}MB -> "
-                  f"{output/1024/1024:.2f}MB ({(output - source)/1024/1024:.2f}MB)")
-        except ZeroDivisionError:
+        source = sum(file.stat().st_size for file in self.__params.source.glob('**/*') if file.is_file())
+        output = sum(file.stat().st_size for file in self.__params.dest.glob('**/*') if file.is_file())
+
+        if (output - source) != 0:
+            self.__printer.plain(f"Result: {source/1024/1024:.2f}MB -> "
+                                 f"{output/1024/1024:.2f}MB ({(output - source)/1024/1024:.2f}MB)")
+        else:
             self.__printer.warning("Nothing compressed!")
 
     def catch_unprocessed(self, input_path: Path, output_path: Path, error):
@@ -100,7 +101,7 @@ class Utils:
         """
         if self.__params.copy_unprocessed:
             copyfile(input_path, output_path)
-            self.__printer.info(f"File {input_path.name} copied to compressed folder.")
+            #self.__printer.info(f"File {input_path.name} copied to compressed folder.")
 
     def catch_duplicates(self, path: Path) -> Path:
         """

@@ -1,23 +1,103 @@
-from progress.bar import IncrementalBar
-from pathlib import Path
+from time import sleep
 import colorama
 import sys
 import os
+
+from vnrecode.params import Params
+from concurrent.futures import ThreadPoolExecutor
+
 
 class Printer:
     """
     Class implements CLI UI for this utility
     """
 
-    def __init__(self, source: Path):
+    __anim = ["\u280b", "\u2819", "\u28e0", "\u28c4"]
+    __ui_size = int
+    __messages = []
+
+    def __init__(self, params_inst: Params):
         """
-        :param source: Path of original (compressing) folder to count its files for progress bar
+        :param params_inst:
         """
         file_count = 0
-        for folder, folders, file in os.walk(source):
+        for folder, folders, file in os.walk(params_inst.source):
             file_count += len(file)
-        self.bar = IncrementalBar('Compressing', max=file_count, suffix='[%(index)d/%(max)d] (%(percent).1f%%)')
-        self.bar.update()
+        self.workers = []
+        self.__ui_size = 0
+        self.__running = True
+        self.__ui_updater = ThreadPoolExecutor().submit(self.update)
+
+    def __print_msgs(self):
+        for msg in self.__messages:
+            self.__ui_size += 1
+            print(msg)
+
+    def __print_bar(self):
+        from random import randint
+        print(f"Recoding... [███████████████] {randint(0, 100)}%")
+        self.__ui_size += 1
+
+    def __print_folder(self):
+        if len(self.workers) > 0:
+            print(f"\x1b[2K\r\033[100m{self.workers[0]['path'][0].parent}\033[49m:")
+            self.__ui_size += 1
+
+    def __print_works(self, frame):
+        for task in self.workers:
+            if task['task'].__getstate__()['_state'] == "RUNNING":
+                self.__ui_size += 1
+                print(
+                    f"[{self.__anim[frame % len(self.__anim)]}] "
+                    f"\033[0;37m{task['path'][0].stem}\033[0m{task['path'][0].suffix}\033[0;37m -> "
+                    f"{task['path'][0].stem}\033[0m.file")
+
+    def __clear(self):
+        print("\033[F\x1b[2K" * self.__ui_size, end='')
+        self.__ui_size = 0
+
+    def update(self):
+        frame = 0
+        while self.__running:
+            self.__print_msgs()
+            self.__print_bar()
+            self.__print_folder()
+            self.__print_works(frame)
+            sleep(0.1)
+            self.__clear()
+            frame+=1
+
+    def stop(self):
+        self.__running = False
+        self.__ui_updater.result()
+        self.__print_msgs()
+
+    def plain(self, string: str):
+        self.__messages.append(string)
+
+    def info(self, string: str):
+        """
+        Method prints string with decor for info messages
+        :param string: String to print
+        :return: None
+        """
+        self.__messages.append(f"\x1b[2K\r\033[100m- {string}\033[49m")
+
+    def warning(self, string: str):
+        """
+        Method prints string with decor for warning messages
+        :param string: String to print
+        :return: None
+        """
+        self.__messages.append(f"\x1b[2K\r\033[93m!\033[0m {string}\033[49m")
+
+    def error(self, string: str):
+        """
+        Method prints string with decor for error messages
+        :param string: String to print
+        :return: None
+        """
+        self.__messages.append(f"\x1b[2K\r\033[31m\u2715\033[0m {string}\033[49m")
 
     @staticmethod
     def win_ascii_esc():
@@ -27,56 +107,3 @@ class Printer:
         """
         if sys.platform == "win32":
             colorama.init()
-
-    def bar_print(self, string: str):
-        """
-        Method prints some string in console and updates progress bar
-        :param string: String to print
-        :return: None
-        """
-        print(string)
-        self.bar.update()
-
-    def info(self, string: str):
-        """
-        Method prints string with decor for info messages
-        :param string: String to print
-        :return: None
-        """
-        self.bar_print(f"\x1b[2K\r\033[100m- {string}\033[49m")
-
-    def warning(self, string: str):
-        """
-        Method prints string with decor for warning messages
-        :param string: String to print
-        :return: None
-        """
-        self.bar_print(f"\x1b[2K\r\033[93m!\033[0m {string}\033[49m")
-
-    def error(self, string: str):
-        """
-        Method prints string with decor for error messages
-        :param string: String to print
-        :return: None
-        """
-        self.bar_print(f"\x1b[2K\r\033[31m\u2715\033[0m {string}\033[49m")
-
-    def files(self, source_path: Path, output_path: Path, comment: str):
-        """
-        Method prints the result of recoding a file with some decorations in the form:
-        input file name -> output file name (quality setting)
-        :param source_path: Input file Path
-        :param output_path: Output file Path
-        :param comment: Comment about recode quality setting
-        :return: None
-        """
-        self.bar_print(f"\x1b[2K\r\033[0;32m\u2713\033[0m \033[0;37m{source_path.stem}\033[0m{source_path.suffix}\033[0;37m -> "
-                                      f"{source_path.stem}\033[0m{output_path.suffix}\033[0;37m ({comment})\033[0m")
-
-    def unknown_file(self, filename: str):
-        """
-        Method prints the result of recoding unknown file
-        :param filename: Name of unknown file
-        :return:
-        """
-        self.bar_print(f"\x1b[2K\r\u2713 \033[0;33m{filename}\033[0m (File will be force compressed via ffmpeg)")

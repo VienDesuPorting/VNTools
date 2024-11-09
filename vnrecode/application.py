@@ -3,13 +3,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 import shutil
+import psutil
+import signal
 import os
 
 from vnrecode.compress import Compress
 from vnrecode.printer import Printer
 from vnrecode.params import Params
 from vnrecode.utils import Utils
-
 
 class Application:
     """
@@ -37,23 +38,25 @@ class Application:
         if self.__params.dest.exists():
             shutil.rmtree(self.__params.dest)
 
-        self.__printer.info("Creating folders...")
         for folder, folders, files in os.walk(source):
             output = self.__utils.get_comp_subdir(folder)
             if not output.exists():
                 os.mkdir(output)
 
-            self.__printer.info(f'Compressing "{folder}" folder...')
-
-            with ThreadPoolExecutor(max_workers=self.__params.workers) as executor:
-                futures = [
-                    executor.submit(self.__compress, Path(folder, file), Path(output))
-                    for file in files if Path(folder, file).is_file()
-                ]
-                for future in as_completed(futures):
-                    future.result()
+            for chunk in range(0, len(files), self.__params.workers):
+                with ThreadPoolExecutor(max_workers=self.__params.workers) as executor:
+                    self.__printer.workers = []
+                    #for file in files:
+                    for file in files[chunk:chunk+self.__params.workers]:
+                        if Path(folder, file).is_file():
+                            work_dict = {
+                                "task": executor.submit(self.__compress, Path(folder, file), Path(output)),
+                                "path": [Path(folder, file), Path(output)]
+                            }
+                            self.__printer.workers.append(work_dict)
 
         self.__utils.print_duplicates()
         self.__utils.get_recode_status()
+        self.__printer.plain(f"Time taken: {datetime.now() - start_time}")
+        self.__printer.stop()
         self.__utils.sys_pause()
-        print(f"Time taken: {datetime.now() - start_time}")
