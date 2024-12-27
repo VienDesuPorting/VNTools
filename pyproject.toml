@@ -23,10 +23,10 @@ name = "vntools"
 version = "2.0-dev"
 requires-python = ">= 3.11"
 dependencies = [
-    "Pillow==10.3.0",
-    "pillow-avif-plugin==1.4.3",
-    "python-ffmpeg==2.0.12",
-    "progress==1.6",
-    "colorama==0.4.6",
-    "argparse~=1.4.0"
+    "Pillow>=10.3.0",
+    "pillow-avif-plugin>=1.4.3",
+    "python-ffmpeg>=2.0.12",
+    "progress>=1.6",
+    "colorama>=0.4.6",
+    "argparse>=1.4.0"
 ]
