@@ -68,7 +68,7 @@ class Params:
         video_ext = config["VIDEO"]["Extension"] if args.config else args.v_ext
         video_codec = config["VIDEO"]["Codec"] if args.config else args.v_codec
         source = Path(args.source)
-        dest = Path(f"{args.source}_compressed")
+        dest = Path(source.name + f"_compressed")
 
         return cls(
             copy_unprocessed, force_compress, mimic_mode, hide_errors, webp_rgba, workers,
