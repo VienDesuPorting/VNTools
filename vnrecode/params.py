@@ -68,6 +68,9 @@ class Params:
         video_ext = config["VIDEO"]["Extension"] if args.config else args.v_ext
         video_codec = config["VIDEO"]["Codec"] if args.config else args.v_codec
         source = Path(args.source)
+        if not source.exists():
+            print("Requested path does not exists. Exiting!")
+            exit(255)
         dest = Path(source.name + f"_compressed")
 
         return cls(
