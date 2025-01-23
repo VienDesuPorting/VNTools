@@ -16,7 +16,7 @@ class Printer:
         file_count = 0
         for folder, folders, file in os.walk(source):
             file_count += len(file)
-        self.bar = IncrementalBar('Compressing', max=file_count, suffix='[%(index)d/%(max)d] (%(percent).1f%%)')
+        self.bar = IncrementalBar('Recoding', max=file_count, suffix='[%(index)d/%(max)d] (%(percent).1f%%)')
         self.bar.update()
 
     @staticmethod
