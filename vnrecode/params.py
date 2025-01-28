@@ -71,7 +71,7 @@ class Params:
         if not source.exists():
             print("Requested path does not exists. Exiting!")
             exit(255)
-        dest = Path(source.name + f"_compressed")
+        dest = Path(source.parent, source.name + f"_compressed")
 
         return cls(
             copy_unprocessed, force_compress, mimic_mode, hide_errors, webp_rgba, workers,
