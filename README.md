@@ -16,10 +16,8 @@ Collection of tools used by VienDesu! Porting Team
 #### Build tools as binaries:
   * Run `./build.sh` on UNIX 
   * Run `.\build.bat` for Windows
-  * Arch Linux - `TODO`
-  * NixOS - `TODO`
 
 #### Install as python package:
   * Run `pip install -U .` command in project folder
-  * Arch Linux - `TODO`
+  * Arch Linux - `paru -Bi .`
   * NixOS - `TODO`
