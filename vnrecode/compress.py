@@ -70,7 +70,7 @@ class Compress:
         """
         bit_rate = self.__params.audio_bitrate
         prefix = self.__utils.get_hash(input_path.name)
-        out_file = Path(output_dir, f'{prefix}_{input_path.stem}.{extension}')
+        out_file = Path(output_dir, f'.{prefix}_{input_path.stem}.{extension}')
         try:
             (FFmpeg()
              .input(input_path)
@@ -93,7 +93,7 @@ class Compress:
         """
         quality = self.__params.image_quality
         prefix = self.__utils.get_hash(input_path.name)
-        out_file = Path(output_dir, f"{prefix}_{input_path.stem}.{extension}")
+        out_file = Path(output_dir, f".{prefix}_{input_path.stem}.{extension}")
         try:
             image = Image.open(input_path)
 
@@ -101,7 +101,7 @@ class Compress:
                     (extension == "webp" and not self.__params.webp_rgba)):
                 if File.has_transparency(image):
                     self.__printer.warning(f"{input_path.name} has transparency. Changing to fallback...")
-                    out_file = Path(output_dir, f"{prefix}_{input_path.stem}.{self.__params.image_fall_ext}")
+                    out_file = Path(output_dir, f".{prefix}_{input_path.stem}.{self.__params.image_fall_ext}")
 
             if File.has_transparency(image):
                 image.convert('RGBA')
@@ -131,7 +131,7 @@ class Compress:
         :return: Path of compressed video file with md5 hash as prefix
         """
         prefix = self.__utils.get_hash(input_path.name)
-        out_file = Path(output_dir, f'{prefix}_{input_path.stem}.{extension}')
+        out_file = Path(output_dir, f'.{prefix}_{input_path.stem}.{extension}')
         if not self.__params.video_skip:
             codec = self.__params.video_codec
             crf = self.__params.video_crf
@@ -160,7 +160,7 @@ class Compress:
         :return: Path of compressed file with md5 hash as prefix
         """
         prefix = self.__utils.get_hash(input_path.name)
-        out_file = Path(output_dir, f"{prefix}_{input_path.name}")
+        out_file = Path(output_dir, f".{prefix}_{input_path.name}")
         if self.__params.force_compress:
             self.__printer.unknown_file(input_path.name)
             try:
