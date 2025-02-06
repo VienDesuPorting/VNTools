@@ -99,7 +99,7 @@ class Params:
         parser.add_argument("-j", "--jobs", type=int, help="Number of threads (default: 16)", default=16)
         parser.add_argument("-ae", dest="a_ext", help="Audio extension (default: opus)", default="opus")
         parser.add_argument("-ab", dest="a_bit", help="Audio bit rate (default: 128k)", default="128k")
-        parser.add_argument("-id", dest="i_down", type=int, help="Image resolution downscale multiplier (default: 1)", default=1)
+        parser.add_argument("-id", dest="i_down", type=float, help="Image resolution downscale multiplier (default: 1)", default=1)
         parser.add_argument("-ie", dest="i_ext", help="Image extension (default: avif)", default="avif")
         parser.add_argument("-ife", dest="i_fallext", help="Image fallback extension (default: webp)", default="webp")
         parser.add_argument("-il", dest='i_lossless', action='store_false', help="Image losing compression mode")
