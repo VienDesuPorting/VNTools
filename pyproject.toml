@@ -20,7 +20,7 @@ unrenapk = "unrenapk.application:launch"
 
 [project]
 name = "vntools"
-version = "2.0-dev"
+version = "2.0.0"
 requires-python = ">= 3.11"
 dependencies = [
     "Pillow>=10.3.0",
