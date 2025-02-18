@@ -1,0 +1,24 @@
+[FFMPEG]
+CopyUnprocessed = true
+ForceCompress = false
+MimicMode = true
+HideErrors = true
+WebpRGBA = true
+Workers = 16
+
+[AUDIO]
+Extension = "opus"
+BitRate = "128k"
+
+[IMAGE]
+ResDownScale = 1
+Extension = "avif"
+FallBackExtension = "webp"
+Lossless = true
+Quality = 100
+
+[VIDEO]
+CRF = 27
+SkipVideo = false
+Extension = "webm"
+Codec = "libvpx-vp9"

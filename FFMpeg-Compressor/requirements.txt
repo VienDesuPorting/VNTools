@@ -1,2 +1,0 @@
-Pillow==9.5.0
-progress==1.6

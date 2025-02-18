@@ -1,0 +1,32 @@
+[build-system]
+requires = [
+    "setuptools >= 61.0"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["vnrecode", "unrenapk", "vnds2renpy"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+'vnrecode' = ['*.py']
+'vnds2renpy' = ['*.py']
+'unrenapk' = ['*.py']
+
+[project.scripts]
+vnrecode = "vnrecode.__main__:init"
+vnds2renpy = "vnds2renpy.__main__:main"
+unrenapk = "unrenapk.application:launch"
+
+[project]
+name = "vntools"
+version = "2.0-dev"
+requires-python = ">= 3.11"
+dependencies = [
+    "Pillow>=10.3.0",
+    "pillow-avif-plugin>=1.4.3",
+    "python-ffmpeg>=2.0.12",
+    "progress>=1.6",
+    "colorama>=0.4.6",
+    "argparse>=1.4.0"
+]
