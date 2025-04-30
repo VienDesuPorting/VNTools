@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
 from __future__ import print_function
-
 import sys
 import os
 import codecs
-import pickle
 import errno
 import random
 try:
@@ -39,6 +37,7 @@ if sys.version_info[0] >= 3:
     def _unpickle(data):
         # Specify latin1 encoding to prevent raw byte values from causing an ASCII decode error.
         return pickle.loads(data, encoding='latin1')
+
 elif sys.version_info[0] == 2:
     def _unicode(text):
         if isinstance(text, unicode):
@@ -161,7 +160,6 @@ class RenPyArchive:
     def verbose_print(self, message):
         if self.verbose:
             print(message)
-
 
     # List files in archive and current internal storage.
     def list(self):
@@ -304,7 +302,8 @@ class RenPyArchive:
         # Reload the file in our internal database.
         self.load(filename)
 
-if __name__ == "__main__":
+
+def main():
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -490,3 +489,6 @@ if __name__ == "__main__":
     else:
         print('No operation specified :(')
         print('Use {} --help for usage details.'.format(sys.argv[0]))
+
+if __name__ == "__main__":
+    main()

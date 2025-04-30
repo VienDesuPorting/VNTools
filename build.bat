@@ -12,6 +12,8 @@ python -m nuitka --jobs=%NUMBER_OF_PROCESSORS% --output-dir=output --follow-impo
 move /Y output\unrenapk.exe output\bin
 python -m nuitka --jobs=%NUMBER_OF_PROCESSORS% --output-dir=output --follow-imports --onefile --output-filename=vnds2renpy vnds2renpy || goto :exit
 move /Y output\vnds2renpy.exe output\bin
+python -m nuitka --jobs=%NUMBER_OF_PROCESSORS% --output-dir=output --follow-imports --onefile --output-filename=rpatool rpatool || goto :exit
+move /Y output\rpatool.exe output\bin
 echo "Done! You can get binaries into output\bin directory"
 
 :venv_error

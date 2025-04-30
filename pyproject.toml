@@ -5,18 +5,20 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["vnrecode", "unrenapk", "vnds2renpy"]
+packages = ["vnrecode", "unrenapk", "vnds2renpy", "rpatool"]
 include-package-data = true
 
 [tool.setuptools.package-data]
 'vnrecode' = ['*.py']
 'vnds2renpy' = ['*.py']
 'unrenapk' = ['*.py']
+'rpatool' = ['*.py']
 
 [project.scripts]
 vnrecode = "vnrecode.__main__:init"
 vnds2renpy = "vnds2renpy.__main__:main"
 unrenapk = "unrenapk.application:launch"
+rpatool = "rpatool.rpatool:main"
 
 [project]
 name = "vntools"

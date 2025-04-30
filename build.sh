@@ -21,4 +21,6 @@ python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --out
 mv output/unrenapk output/bin
 python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=vnds2renpy vnds2renpy
 mv output/vnds2renpy output/bin
+python3 -m nuitka "${jobs}" --output-dir=output --onefile --follow-imports --output-filename=rpatool rpatool
+mv output/rpatool output/bin
 echo "Done! You can get binaries into output/bin directory"
