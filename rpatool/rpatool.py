@@ -20,8 +20,7 @@ except:
             print('         if this occurs, please upgrade to a newer Python (>= 3.5).', file=sys.stderr)
         print(file=sys.stderr)
 
-
-if sys.version_info[0] >= 3:
+if sys.version_info[0] >= 3: # Python 3
     def _unicode(text):
         return text
 
@@ -38,9 +37,9 @@ if sys.version_info[0] >= 3:
         # Specify latin1 encoding to prevent raw byte values from causing an ASCII decode error.
         return pickle.loads(data, encoding='latin1')
 
-elif sys.version_info[0] == 2:
+elif sys.version_info[0] == 2: # Python 2
     def _unicode(text):
-        if isinstance(text, unicode):
+        if isinstance(text, unicode): # You can ignore 'Unresolved reference', because you never hit this block actually
             return text
         return text.decode('utf-8')
 
