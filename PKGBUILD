@@ -3,7 +3,7 @@
 
 _pkgname=VNTools
 pkgname=vntools-git
-pkgver=2.0.e5bf961
+pkgver=2.1.ab883708
 pkgrel=1
 pkgdesc="Collection of tools used by VienDesu! Porting Team"
 arch=("any")
@@ -16,7 +16,7 @@ sha256sums=("SKIP")
 
 pkgver() {
   cd "${srcdir}/${_pkgname}"
-  printf "2.0.%s" "$(git rev-parse --short HEAD)"
+  printf "2.1.%s" "$(git rev-parse --short HEAD)"
 }
 
 build() {
