@@ -8,7 +8,7 @@ pkgrel=1
 pkgdesc="Collection of tools used by VienDesu! Porting Team"
 arch=("any")
 url="https://github.com/VienDesuPorting/VNTools"
-depends=("python" "python-pillow" "python-pillow-avif-plugin" "python-python-ffmpeg" "python-progress" "python-colorama")
+depends=("python" "python-pillow" "python-python-ffmpeg" "python-progress" "python-colorama")
 makedepends=("python-setuptools" "git")
 provides=("vntools")
 source=("git+${url}.git#branch=testing")

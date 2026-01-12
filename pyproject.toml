@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools >= 61.0"
+    "setuptools>=77.0"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -25,10 +25,8 @@ name = "vntools"
 version = "2.1-dev"
 requires-python = ">= 3.11"
 dependencies = [
-    "Pillow>=10.3.0",
-    "pillow-avif-plugin>=1.4.3",
+    "Pillow>=12.1.0",
     "python-ffmpeg>=2.0.12",
     "progress>=1.6",
-    "colorama>=0.4.6",
-    "argparse>=1.4.0"
+    "colorama>=0.4.6"
 ]

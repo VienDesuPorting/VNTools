@@ -1,7 +1,6 @@
 from ffmpeg import FFmpeg, FFmpegError
 from pathlib import Path
 from PIL import Image
-import pillow_avif
 
 from vnrecode.printer import Printer
 from vnrecode.params import Params
