@@ -70,16 +70,19 @@ class Compress:
         bit_rate = self.__params.audio_bitrate
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f'.{prefix}_{input_path.stem}.{extension}')
-        try:
-            (FFmpeg()
-             .input(input_path)
-             .option("hide_banner")
-             .output(out_file,{"b:a": bit_rate, "loglevel": "error"})
-             .execute()
-             )
-        except FFmpegError as e:
-            self.__utils.catch_unprocessed(input_path, out_file, e)
-        self.__printer.files(input_path, out_file, f"{bit_rate}")
+        if not self.__params.audio_skip:
+            try:
+                (FFmpeg()
+                .input(input_path)
+                .option("hide_banner")
+                .output(out_file,{"b:a": bit_rate, "loglevel": "error"})
+                .execute()
+                )
+            except FFmpegError as e:
+                self.__utils.catch_unprocessed(input_path, out_file, e)
+            self.__printer.files(input_path, out_file, f"{bit_rate}")
+        else:
+            self.__utils.copy_unprocessed(input_path, out_file)
         return out_file
 
     def image(self, input_path: Path, output_dir: Path, extension: str) -> Path:
@@ -93,32 +96,35 @@ class Compress:
         quality = self.__params.image_quality
         prefix = self.__utils.get_hash(input_path.name)
         out_file = Path(output_dir, f".{prefix}_{input_path.stem}.{extension}")
-        try:
-            image = Image.open(input_path)
+        if not self.__params.image_skip:
+            try:
+                image = Image.open(input_path)
 
-            if (extension == "jpg" or extension == "jpeg" or
-                    (extension == "webp" and not self.__params.webp_rgba)):
+                if (extension == "jpg" or extension == "jpeg" or
+                        (extension == "webp" and not self.__params.webp_rgba)):
+                    if File.has_transparency(image):
+                        self.__printer.warning(f"{input_path.name} has transparency. Changing to fallback...")
+                        out_file = Path(output_dir, f".{prefix}_{input_path.stem}.{self.__params.image_fall_ext}")
+
                 if File.has_transparency(image):
-                    self.__printer.warning(f"{input_path.name} has transparency. Changing to fallback...")
-                    out_file = Path(output_dir, f".{prefix}_{input_path.stem}.{self.__params.image_fall_ext}")
+                    image.convert('RGBA')
 
-            if File.has_transparency(image):
-                image.convert('RGBA')
+                res_downscale = self.__params.image_downscale
+                if res_downscale != 1:
+                    width, height = image.size
+                    new_size = (int(width / res_downscale), int(height / res_downscale))
+                    image = image.resize(new_size)
 
-            res_downscale = self.__params.image_downscale
-            if res_downscale != 1:
-                width, height = image.size
-                new_size = (int(width / res_downscale), int(height / res_downscale))
-                image = image.resize(new_size)
-
-            image.save(out_file,
-                       optimize=True,
-                       lossless=self.__params.image_lossless,
-                       quality=quality,
-                       minimize_size=True)
-            self.__printer.files(input_path, out_file, f"{quality}%")
-        except Exception as e:
-            self.__utils.catch_unprocessed(input_path, out_file, e)
+                image.save(out_file,
+                        optimize=True,
+                        lossless=self.__params.image_lossless,
+                        quality=quality,
+                        minimize_size=True)
+                self.__printer.files(input_path, out_file, f"{quality}%")
+            except Exception as e:
+                self.__utils.catch_unprocessed(input_path, out_file, e)
+        else:
+            self.__utils.copy_unprocessed(input_path, out_file)
         return out_file
 
     def video(self, input_path: Path, output_dir: Path, extension: str) -> Path:

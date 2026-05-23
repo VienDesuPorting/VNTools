@@ -12,6 +12,7 @@ Python utility uses Pillow and ffmpeg to compress Visual Novel Resources
 #### AUDIO section
 * Extension - Required audio file extension. It supports: `.aac`, `.flac`, `.m4a`, `.mp3`, `.ogg`, `.opus`, `.raw`, `.wav`, `.wma`.
 * BitRate - Required audio bitrate. For best quality use `320k` value.
+* SkipAudio - Skip processing all audio files. (default: `false`)
 
 #### IMAGE section
 * ResDownScale - Downscale image resolution count. (default: `1`)
@@ -19,6 +20,7 @@ Python utility uses Pillow and ffmpeg to compress Visual Novel Resources
 * FallBackExtension - Extension if current format does not support RGBA.
 * Lossless - Enables lossless compression for supported formats. With this quality parameter means quality of compression. (default: `false`)
 * Quality - Quality level of images. Values range: `0-100` (100 - best quality, 0 - worst quality)
+* SkipImage - Skip processing all images. (default: `false`)
 
 #### VIDEO section
 * CRF ("Constant Quality") - Video quality parameter for ffmpeg. The CRF value can be from 0 to 63. Lower values mean better quality. Recommended values range from 15 to 35, with 31 being recommended for 1080p HD video. (default: `27`)

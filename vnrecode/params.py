@@ -20,12 +20,14 @@ class Params:
 
     audio_ext: str
     audio_bitrate: str
+    audio_skip: bool
 
     image_downscale: int
     image_ext: str
     image_fall_ext: str
     image_lossless: str
     image_quality: int
+    image_skip: bool
 
     video_crf: int
     video_skip: bool
@@ -58,11 +60,13 @@ class Params:
         webp_rgba = config["FFMPEG"]["WebpRGBA"] if args.config else args.webp_rgba
         audio_ext = config["AUDIO"]["Extension"] if args.config else args.a_ext
         audio_bitrate = config["AUDIO"]["BitRate"] if args.config else args.a_bit
+        audio_skip = config["AUDIO"]["SkipAudio"] if args.config else args.a_skip
         image_downscale = config["IMAGE"]["ResDownScale"] if args.config else args.i_down
         image_ext = config["IMAGE"]["Extension"] if args.config else args.i_ext
         image_fall_ext = config["IMAGE"]["FallBackExtension"] if args.config else args.i_fallext
         image_lossless = config["IMAGE"]["Lossless"] if args.config else args.i_lossless
         image_quality = config["IMAGE"]["Quality"] if args.config else args.i_quality
+        image_skip = config["IMAGE"]["SkipImage"] if args.config else args.i_skip
         video_crf = config["VIDEO"]["CRF"] if args.config else args.v_crf
         video_skip = config["VIDEO"]["SkipVideo"] if args.config else args.v_skip
         video_ext = config["VIDEO"]["Extension"] if args.config else args.v_ext
@@ -75,8 +79,8 @@ class Params:
 
         return cls(
             copy_unprocessed, force_compress, mimic_mode, hide_errors, webp_rgba, workers,
-            audio_ext, audio_bitrate,
-            image_downscale, image_ext, image_fall_ext, image_lossless, image_quality,
+            audio_ext, audio_bitrate, audio_skip,
+            image_downscale, image_ext, image_fall_ext, image_lossless, image_quality, image_skip,
             video_crf, video_skip, video_ext, video_codec, source, dest
         )
 
@@ -99,11 +103,13 @@ class Params:
         parser.add_argument("-j", "--jobs", type=int, help="Number of threads (default: 16)", default=16)
         parser.add_argument("-ae", dest="a_ext", help="Audio extension (default: opus)", default="opus")
         parser.add_argument("-ab", dest="a_bit", help="Audio bit rate (default: 128k)", default="128k")
+        parser.add_argument("-as", dest="a_skip", action='store_true', help="Skip audio recoding")
         parser.add_argument("-id", dest="i_down", type=float, help="Image resolution downscale multiplier (default: 1)", default=1)
         parser.add_argument("-ie", dest="i_ext", help="Image extension (default: avif)", default="avif")
         parser.add_argument("-ife", dest="i_fallext", help="Image fallback extension (default: webp)", default="webp")
         parser.add_argument("-il", dest='i_lossless', action='store_false', help="Image losing compression mode")
         parser.add_argument("-iq", dest="i_quality", type=int, help="Image quality (default: 100)", default=100)
+        parser.add_argument("-is", dest="i_skip", action='store_true', help="Skip image recoding")
         parser.add_argument("--v_crf", help="Video CRF number (default: 27)", type=int, default=27)
         parser.add_argument("-vs", dest="v_skip", action='store_true', help="Skip video recoding")
         parser.add_argument("-ve", dest="v_ext", help="Video extension (default: webm)", default="webm")

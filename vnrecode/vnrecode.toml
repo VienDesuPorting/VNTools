@@ -9,6 +9,7 @@ Workers = 16
 [AUDIO]
 Extension = "opus"
 BitRate = "128k"
+SkipAudio = false
 
 [IMAGE]
 ResDownScale = 1
@@ -16,6 +17,7 @@ Extension = "avif"
 FallBackExtension = "webp"
 Lossless = true
 Quality = 100
+SkipImage = false
 
 [VIDEO]
 CRF = 27
