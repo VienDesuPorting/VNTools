@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Self
 import tomllib
+import os
 
 @dataclass
 class Params:
@@ -100,7 +101,7 @@ class Params:
         parser.add_argument("-nm", "--no-mimic", dest='mimic', action='store_false', help="Disable mimic mode")
         parser.add_argument("-v", "--show_errors", action='store_false', help="Show recode errors")
         parser.add_argument("--webp-rgb", dest='webp_rgba', action='store_false', help="Recode .webp without alpha channel")
-        parser.add_argument("-j", "--jobs", type=int, help="Number of threads (default: 16)", default=16)
+        parser.add_argument("-j", "--jobs", type=int, help="Number of threads (default: cores count)", default=os.cpu_count())
         parser.add_argument("-ae", dest="a_ext", help="Audio extension (default: opus)", default="opus")
         parser.add_argument("-ab", dest="a_bit", help="Audio bit rate (default: 128k)", default="128k")
         parser.add_argument("-as", dest="a_skip", action='store_true', help="Skip audio recoding")
