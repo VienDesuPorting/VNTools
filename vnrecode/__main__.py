@@ -12,7 +12,7 @@ def init():
     :return: None
     """
     params = Params.setup()
-    printer = Printer(params.source)
+    printer = Printer(params)
     utils = Utils(params, printer)
     compress = Compress(params, printer, utils)
 

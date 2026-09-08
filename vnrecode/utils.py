@@ -100,7 +100,7 @@ class Utils:
         """
         if self.__params.copy_unprocessed:
             copyfile(input_path, output_path)
-            self.__printer.info(f"File {input_path.name} copied to compressed folder.")
+            self.__printer.info(f"File {input_path.name} copied without changes.")
 
     def catch_duplicates(self, path: Path) -> Path:
         """

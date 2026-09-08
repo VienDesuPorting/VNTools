@@ -1,23 +1,31 @@
-from progress.bar import IncrementalBar
-from pathlib import Path
-import colorama
 import sys
-import os
+import colorama
+from time import sleep
+from threading import Event
+
+from vnrecode.params import Params
+
+CLR = "\033[K\r"
+RET = "\033[F"
+# CLR = "CLR"
+# RET = "RET"
 
 class Printer:
     """
     Class implements CLI UI for this utility
     """
 
-    def __init__(self, source: Path):
-        """
-        :param source: Path of original (compressing) folder to count its files for progress bar
-        """
-        file_count = 0
-        for folder, folders, file in os.walk(source):
-            file_count += len(file)
-        self.bar = IncrementalBar('Recoding', max=file_count, suffix='[%(index)d/%(max)d] (%(percent).1f%%)')
-        self.bar.update()
+    __messages = []
+    cursor = ['|', '/', '-', '\\']
+    active = []
+    threads_n: int
+    stop_event: Event
+    update_rate = 0.25
+
+    def __init__(self, params: Params):
+        self.threads_n = params.workers
+        self.active = [None]*params.workers
+        self.stop_event = Event()
 
     @staticmethod
     def win_ascii_esc():
@@ -28,14 +36,13 @@ class Printer:
         if sys.platform == "win32":
             colorama.init()
 
-    def bar_print(self, string: str):
+    def print(self, string: str):
         """
-        Method prints some string in console and updates progress bar
+        Method prints some string in console in ui thread
         :param string: String to print
         :return: None
         """
-        print(string)
-        self.bar.update()
+        self.__messages.append(f"{string}")
 
     def info(self, string: str):
         """
@@ -43,7 +50,7 @@ class Printer:
         :param string: String to print
         :return: None
         """
-        self.bar_print(f"\x1b[2K\r\033[100m- {string}\033[49m")
+        self.__messages.append(f"[I] {string}")
 
     def warning(self, string: str):
         """
@@ -51,7 +58,7 @@ class Printer:
         :param string: String to print
         :return: None
         """
-        self.bar_print(f"\x1b[2K\r\033[93m!\033[0m {string}\033[49m")
+        self.__messages.append(f"[W] {string}")
 
     def error(self, string: str):
         """
@@ -59,24 +66,27 @@ class Printer:
         :param string: String to print
         :return: None
         """
-        self.bar_print(f"\x1b[2K\r\033[31m\u2715\033[0m {string}\033[49m")
+        self.__messages.append(f"[E] {string}")
 
-    def files(self, source_path: Path, output_path: Path, comment: str):
-        """
-        Method prints the result of recoding a file with some decorations in the form:
-        input file name -> output file name (quality setting)
-        :param source_path: Input file Path
-        :param output_path: Output file Path
-        :param comment: Comment about recode quality setting
-        :return: None
-        """
-        self.bar_print(f"\x1b[2K\r\033[0;32m\u2713\033[0m \033[0;37m{source_path.stem}\033[0m{source_path.suffix}\033[0;37m -> "
-                                      f"{source_path.stem}\033[0m{output_path.suffix}\033[0;37m ({comment})\033[0m")
+    def __print_messages(self):
+        for msg in self.__messages:
+            print(f"{CLR}{msg}")
+            self.__messages.remove(msg)
 
-    def unknown_file(self, filename: str):
-        """
-        Method prints the result of recoding unknown file
-        :param filename: Name of unknown file
-        :return:
-        """
-        self.bar_print(f"\x1b[2K\r\u2713 \033[0;33m{filename}\033[0m (File will be force compressed via ffmpeg)")
+    def updater(self):
+        cursor_frame = 0
+        while True:
+            if self.stop_event.is_set():
+                break
+            self.__print_messages()
+            for file in self.active:
+                if file:
+                    print(CLR, '*', file)
+                else:
+                    print(CLR, '*', "IDLE")
+            print(f"{CLR}Progress: 10/30 (33%)", self.cursor[cursor_frame])
+            cursor_frame += 1
+            if cursor_frame > len(self.cursor)-1: cursor_frame = 0
+
+            sleep(self.update_rate)
+            print(RET * (self.threads_n+1), end="") # Move cursor up
